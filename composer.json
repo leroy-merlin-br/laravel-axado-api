@@ -1,0 +1,35 @@
+{
+    "name": "leroy-merlin-br/laravel-axado-api",
+    "description": "A consumer for axado API.",
+    "keywords": ["axado","laravel","shipping", "brazil", "laravel","illuminate"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Guilherme Guitte",
+            "email": "guilherme.guitte@gmail.com"
+        },
+        {
+            "name": "Zizaco Zizuini",
+            "email": "zizaco@gmail.com"
+        },
+        {
+            "name": "Ricardo Plansky",
+            "email": "ricardo.plansky@yahoo.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Axado\\" : "src/LeroyMerlin/Axado"
+        },
+        "classmap": [
+            "tests/TestCase.php"
+        ]
+    },
+    "require": {
+        "laravel/framework" : "~4.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.2",
+        "mockery/mockery": "dev-master"
+    }
+}
