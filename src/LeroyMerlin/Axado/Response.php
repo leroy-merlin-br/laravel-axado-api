@@ -10,6 +10,18 @@ class Response
     protected $isOk;
 
     /**
+     * Error id sended by Axado.
+     * @var boolean
+     */
+    protected $errorId;
+
+    /**
+     * The message sended by Axado.
+     * @var boolean
+     */
+    protected $errorMessage;
+
+    /**
      * Array of Axado\Quotation.
      * @var array
      */
@@ -22,7 +34,42 @@ class Response
      */
     public function parse($raw = null)
     {
-        $this->isOk = ! is_null($raw);
+        $arrayResponse = json_decode($raw);
+
+        if (! $this->isError($arrayResponse)) {
+            $this->parseQuotations($arrayResponse);
+            $this->isOk = true;
+        } else {
+            $this->isOk = false;
+        }
+    }
+
+    /**
+     * Parse the response into Quotation objects
+     * @param  array $arrayResponse
+     * @return null
+     */
+    public function parseQuotations($arrayResponse)
+    {
+        # code...
+    }
+
+    /**
+     * Verify if this Response has a error.
+     *
+     * @param  array  $arrayResponse
+     * @return boolean
+     */
+    public function isError($arrayResponse)
+    {
+        if (! $arrayResponse || isset($arrayResponse['erro_id'])) {
+            $this->errorId      = $arrayResponse['erro_id'];
+            $this->errorMessage = $arrayResponse['erro_msg'];
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
