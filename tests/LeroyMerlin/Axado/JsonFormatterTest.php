@@ -3,6 +3,7 @@ namespace Axado;
 
 use TestCase;
 use Mockery as m;
+use \Axado\Formatter\JsonFormatter;
 
 class JsonFormatterTest extends TestCase
 {
@@ -15,7 +16,7 @@ class JsonFormatterTest extends TestCase
 
     public function testShouldFormatPropertlyTheInstanceGiven()
     {
-        $formatter  = new Formatter\JsonFormatter;
+        $formatter  = new JsonFormatter;
         $instance   = m::mock('Axado\Shipping');
         $volume     = m::mock('Axado\Volume\VolumeInterface');
         $attributes = ['preco' => 10.5, 'unidade' => 10];

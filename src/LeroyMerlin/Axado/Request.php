@@ -10,6 +10,12 @@ class Request
     protected $urlConsult = "http://api.axado.com.br/v2/consulta/?token=";
 
     /**
+     * Token string
+     * @var string
+     */
+    protected $token;
+
+    /**
      * Constructor
      * @param string $token
      */
@@ -24,7 +30,7 @@ class Request
      */
     public function consultShipping($jsonString)
     {
-        $raw = $this->doRequest("POST", $this->urlConsult, $jsonString);
+        $raw = $this->doRequest("POST", $this->urlConsult . $this->token, $jsonString);
         return $this->createResponse($raw);
     }
 
@@ -43,6 +49,7 @@ class Request
 
     /**
      * Request to Axado API.
+     * @codeCoverageIgnore
      * @return string
      */
     protected function doRequest($method, $path, $data)
