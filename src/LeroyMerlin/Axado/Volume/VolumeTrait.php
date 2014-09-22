@@ -7,7 +7,7 @@ trait VolumeTrait {
      * Returns the instance parsed to Json.
      * @return string
      */
-    public function volumeToJson()
+    public function volumeToArray()
     {
         $attributes = [];
 
@@ -19,6 +19,6 @@ trait VolumeTrait {
         $attributes['largura']     = $this->getWidth();
         $attributes['peso']        = $this->getWeight();
 
-        return json_encode($attributes);
+        return $attributes;
     }
 }

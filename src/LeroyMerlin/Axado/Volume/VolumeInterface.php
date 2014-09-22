@@ -49,5 +49,5 @@ interface VolumeInterface {
      * Json for volume
      * @return array
      */
-    public function volumeToJson();
+    public function volumeToArray();
 }

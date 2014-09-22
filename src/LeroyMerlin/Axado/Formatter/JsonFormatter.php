@@ -29,7 +29,7 @@ class JsonFormatter implements FormatterInterface
         $volumes    = $this->instance->allVolumes();
 
         foreach ($volumes as $index => $volume) {
-            $attributes["volumes"][$index] = $volume->volumeToJson();
+            $attributes["volumes"][$index] = $volume->volumeToArray();
         }
 
         return json_encode($attributes);

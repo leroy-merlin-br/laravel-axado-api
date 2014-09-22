@@ -15,19 +15,19 @@ class JsonFormatterTest extends TestCase
 
     public function testShouldFormatPropertlyTheInstanceGiven()
     {
-        $instance   = m::mock('Axado\Shipping');
         $formatter  = new Formatter\JsonFormatter;
-        $attributes = ['preco' => 10.5, 'unidade' => 10];
+        $instance   = m::mock('Axado\Shipping');
         $volume     = m::mock('Axado\Volume\VolumeInterface');
+        $attributes = ['preco' => 10.5, 'unidade' => 10];
 
         // Expect
         $instance->shouldReceive('getAllAttributes')
             ->once()
             ->andReturn($attributes);
 
-        $volume->shouldReceive('volumeToJson')
+        $volume->shouldReceive('volumeToArray')
             ->once()
-            ->andReturn('{ preco: 10.50, unidade: 1 }');
+            ->andReturn(['preco' => 10.50, 'unidade' => 1]);
 
         $instance->shouldReceive('allVolumes')
             ->once()
@@ -36,6 +36,9 @@ class JsonFormatterTest extends TestCase
         $formatter->setInstance($instance);
         $result = $formatter->format();
 
-        $this->assertEquals('{"preco":10.5,"unidade":10,"volumes":["{ preco: 10.50, unidade: 1 }"]}', $result);
+        $this->assertEquals(
+            '{"preco":10.5,"unidade":10,"volumes":[{"preco":10.5,"unidade":1}]}',
+            $result
+        );
     }
 }
