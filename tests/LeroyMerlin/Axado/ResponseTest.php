@@ -69,4 +69,25 @@ class ResponseTest extends TestCase
         // Assert
         $this->assertFalse($result);
     }
+
+    public function testShouldParseQuotations()
+    {
+        // Set
+        $response = new Response;
+        $data = [
+            "cotacoes" => [
+                [
+                    "transportadora_metaname" => "correios",
+                    "servico_metaname"        => "correios-pac"
+                ]
+            ]
+        ];
+
+        // Act
+        $response->parseQuotations($data);
+        $result = $response->quotations();
+
+        // Assert
+        $this->assertTrue(is_array($result));
+    }
 }

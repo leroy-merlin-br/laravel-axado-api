@@ -25,7 +25,16 @@ class Response
      * Array of Axado\Quotation.
      * @var array
      */
-    protected $quotations;
+    protected $quotations = [];
+
+    /**
+     * Getter for quotations.
+     * @return array
+     */
+    public function quotations()
+    {
+        return $this->quotations;
+    }
 
     /**
      * Parse the response to this object.
@@ -51,7 +60,13 @@ class Response
      */
     public function parseQuotations($arrayResponse)
     {
-        # code...
+        $quotationsArray = isset($arrayResponse['cotacoes']) ? $arrayResponse['cotacoes'] : [];
+
+        foreach ($quotationsArray as $quotationArray) {
+            $quotation = new Quotation;
+            $quotation->fill($quotationArray);
+            $this->quotations[] = $quotation;
+        }
     }
 
     /**
