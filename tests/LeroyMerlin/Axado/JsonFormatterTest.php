@@ -16,9 +16,9 @@ class JsonFormatterTest extends TestCase
     public function testShouldFormatPropertlyTheInstanceGiven()
     {
         $instance   = m::mock('Axado\Shipping');
-        $formatter  = new JsonFormatter;
+        $formatter  = new Formatter\JsonFormatter;
         $attributes = ['preco' => 10.5, 'unidade' => 10];
-        $volume     = m::mock('Axado\VolumeInterface');
+        $volume     = m::mock('Axado\Volume\VolumeInterface');
 
         // Expect
         $instance->shouldReceive('getAllAttributes')

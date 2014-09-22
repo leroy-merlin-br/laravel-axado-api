@@ -1,5 +1,5 @@
 <?php
-namespace Axado;
+namespace Axado\Volume;
 
 interface VolumeInterface {
 

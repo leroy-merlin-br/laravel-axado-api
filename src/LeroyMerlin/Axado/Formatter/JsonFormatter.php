@@ -1,5 +1,5 @@
 <?php
-namespace Axado;
+namespace Axado\Formatter;
 
 class JsonFormatter implements FormatterInterface
 {
@@ -14,7 +14,7 @@ class JsonFormatter implements FormatterInterface
      * Setter for instance.
      * @param VolumeInterface $instance
      */
-    public function setInstance(Shipping $instance)
+    public function setInstance(\Axado\Shipping $instance)
     {
         $this->instance = $instance;
     }
