@@ -45,10 +45,12 @@ $shipping->addVolume($volume);
 /**
  * Getting all quotations
  */
-$shipping->quotations();
+var_dump($shipping->quotations());
 
 /**
  * Get the costs and dealine to the first Quotation.
  */
-$shipping->getCosts();     // in reais
-$shipping->getDeadline();  // in days
+var_dump($shipping->getCosts());     // in reais
+var_dump($shipping->getDeadline());  // in days
+
+$shipping->flagAsContracted();

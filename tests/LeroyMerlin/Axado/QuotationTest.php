@@ -44,4 +44,65 @@ class QuotationTest extends TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    public function testShouldReturnNullWithNoTheQuotationToken()
+    {
+        // Set
+        $quotation = new Quotation;
+
+        // Assert
+        $this->assertNull($quotation->getQuotationCode());
+    }
+
+    public function testShouldReturnTheQuotationToken()
+    {
+        // Set
+        $quotation = new Quotation;
+
+        $data = [
+            "cotacao_codigo" => "123"
+        ];
+
+        // Act
+        $quotation->fill($data);
+
+        // Assert
+        $this->assertEquals("123", $quotation->getQuotationCode());
+    }
+
+    public function testShouldReturnTheCosts()
+    {
+        // Set
+        $quotation = new Quotation;
+
+        $this->assertNull($quotation->getCosts());
+
+        $data = [
+            "cotacao_preco" => "123,1"
+        ];
+
+        // Act
+        $quotation->fill($data);
+
+        // Act
+        $this->assertEquals("123,1", $quotation->getCosts());
+    }
+
+    public function testShouldReturnTheDeadline()
+    {
+        // Set
+        $quotation = new Quotation;
+
+        $this->assertNull($quotation->getDeadline());
+
+        $data = [
+            "cotacao_prazo" => "12"
+        ];
+
+        // Act
+        $quotation->fill($data);
+
+        // Assert
+        $this->assertEquals("12", $quotation->getDeadline());
+    }
 }

@@ -123,6 +123,10 @@ class ShippingTest extends TestCase
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        $quotation->shouldReceive('getCosts')
+            ->once()
+            ->andReturn($expected);
+
         // Expect
         $shipping->shouldReceive('firstQuotation')
             ->once()
@@ -167,6 +171,10 @@ class ShippingTest extends TestCase
         $shipping->shouldReceive('firstQuotation')
             ->once()
             ->andReturn($quotation);
+
+        $quotation->shouldReceive('getDeadline')
+            ->once()
+            ->andReturn($expected);
 
         // Act
         $result = $shipping->getDeadline();
@@ -258,6 +266,10 @@ class ShippingTest extends TestCase
             ->twice()
             ->andReturn([]);
 
+        $response->shouldReceive('getQuotationToken')
+            ->once()
+            ->andReturn("1231203das01");
+
         $shipping->shouldReceive('newRequest')
             ->once()
             ->with($token)
@@ -341,5 +353,44 @@ class ShippingTest extends TestCase
 
         // Assert
         $this->assertFalse($result);
+    }
+
+    public function testShouldFlagAQuotationAsContracted()
+    {
+        // Set
+        $shipping = m::mock('Axado\Shipping[newRequest]');
+        $request  = m::mock('Axado\Request[flagAsContracted]', ['1010']);
+
+        $shipping->shouldAllowMockingProtectedMethods();
+
+        // Expect
+        $shipping->shouldReceive('newRequest')
+            ->once()
+            ->andReturn($request);
+
+        $request->shouldReceive('flagAsContracted')
+            ->with($shipping, '')
+            ->once();
+
+        // Act
+        $shipping->flagAsContracted();
+    }
+
+    public function testShouldReturnGetQuotationElected()
+    {
+        // Set
+        $shipping  = m::mock('Axado\Shipping[quotations]');
+        $quotation = m::mock('Axado\Quotation');
+
+        // Expect
+        $shipping->shouldReceive('quotations')
+            ->once()
+            ->andReturn([$quotation]);
+
+        // Act
+        $this->callProtected($shipping, 'firstQuotation');
+
+        // Assert
+        $this->assertEquals($quotation, $shipping->getQuotationElected());
     }
 }

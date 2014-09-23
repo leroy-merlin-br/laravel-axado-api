@@ -15,6 +15,19 @@ class Shipping
     protected $attributes = [];
 
     /**
+     * Quotation used.
+     *
+     * @var Axado\Quotation
+     */
+    protected $quotationElected;
+
+    /**
+     * Quotation string.
+     * @var string
+     */
+    protected $quotation_token;
+
+    /**
      * Requires fields in Shipping.
      * @var array
      */
@@ -87,8 +100,9 @@ class Shipping
         }
 
         if (! $this->response) {
-            $request = $this->newRequest(static::$token);
-            $this->response = $request->consultShipping($this->toJson());
+            $request               = $this->newRequest(static::$token);
+            $this->response        = $request->consultShipping($this->toJson());
+            $this->quotation_token = $this->response->getQuotationToken();
         }
 
         return $this->response->quotations();
@@ -104,7 +118,7 @@ class Shipping
         $quotation = $this->firstQuotation();
 
         if ($quotation) {
-            return $quotation->quotation_price;
+            return $quotation->getCosts();
         }
 
         return null;
@@ -120,10 +134,33 @@ class Shipping
         $quotation = $this->firstQuotation();
 
         if ($quotation) {
-            return $quotation->deadline;
+            return $quotation->getDeadline();
         }
 
         return null;
+    }
+
+    /**
+     * Marking this shipping quotation as contracted to Axado API.
+     *
+     * @return null
+     */
+    public function flagAsContracted()
+    {
+        $request = $this->newRequest(static::$token);
+        $token   = $this->quotation_token;
+
+        $request->flagAsContracted($this, $token);
+    }
+
+    /**
+     * Getter for quotation elected.
+     *
+     * @return Axado\Quotation
+     */
+    public function getQuotationElected()
+    {
+        return $this->quotationElected;
     }
 
     /**
@@ -237,6 +274,7 @@ class Shipping
         $quotations = (array)$this->quotations();
 
         if (isset($quotations[0])) {
+            $this->quotationElected = $quotations[0];
             return $quotations[0];
         }
 

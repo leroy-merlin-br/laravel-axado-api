@@ -14,7 +14,8 @@ class Quotation {
         "servico_nome"            => "service_name",
         "cotacao_preco"           => "quotation_price",
         "cotacao_custo"           => "quotation_costs",
-        "cotacao_prazo"           => "deadline"
+        "cotacao_prazo"           => "deadline",
+        "cotacao_codigo"          => "quotation_id"
     ];
 
     /**
@@ -49,5 +50,44 @@ class Quotation {
     public function attributes()
     {
         return $this->attributes;
+    }
+
+    /**
+     * Returns the quotation code.
+     * @return null|string
+     */
+    public function getQuotationCode()
+    {
+        if (isset($this->attributes['quotation_id'])) {
+            return $this->attributes['quotation_id'];
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the cost.
+     * @return null|string
+     */
+    public function getCosts()
+    {
+        if (isset($this->attributes['quotation_price'])) {
+            return $this->attributes['quotation_price'];
+        }
+
+        return null;
+    }
+
+     /**
+     * Returns the deadline in days
+     * @return null|string
+     */
+    public function getDeadline()
+    {
+        if (isset($this->attributes['deadline'])) {
+            return $this->attributes['deadline'];
+        }
+
+        return null;
     }
 }

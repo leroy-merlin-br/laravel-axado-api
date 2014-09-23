@@ -97,7 +97,8 @@ class ResponseTest extends TestCase
                     "transportadora_metaname" => "correios",
                     "servico_metaname"        => "correios-pac"
                 ]
-            ]
+            ],
+            "consulta_token" => "token consulta"
         ];
 
         // Act
@@ -106,5 +107,7 @@ class ResponseTest extends TestCase
 
         // Assert
         $this->assertTrue(is_array($result));
+
+        $this->assertEquals("token consulta", $response->getQuotationToken());
     }
 }

@@ -32,6 +32,13 @@ class Response
     protected $quotations = [];
 
     /**
+     * The token sended by Axado.
+     *
+     * @var string
+     */
+    protected $quotation_token;
+
+    /**
      * Getter for quotations.
      *
      * @return array
@@ -83,6 +90,10 @@ class Response
             $quotationsArray = $arrayResponse['cotacoes'];
         }
 
+        if (isset($arrayResponse["consulta_token"])) {
+            $this->quotation_token = $arrayResponse["consulta_token"];
+        }
+
         foreach ($quotationsArray as $quotationArray) {
             $quotation = new Quotation;
             $quotation->fill($quotationArray);
@@ -106,5 +117,15 @@ class Response
         }
 
         return false;
+    }
+
+    /**
+     * Returns the quotation token.
+     *
+     * @return string
+     */
+    public function getQuotationToken()
+    {
+        return $this->quotation_token;
     }
 }

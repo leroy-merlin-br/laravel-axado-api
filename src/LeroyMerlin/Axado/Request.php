@@ -8,7 +8,14 @@ class Request
      *
      * @var string
      */
-    protected $urlConsult = "http://api.axado.com.br/v2/consulta/?token=";
+    protected static $urlConsult = "http://api.axado.com.br/v2/consulta/?token=";
+
+    /**
+     * The de API url.
+     *
+     * @var string
+     */
+    protected static $urlQuotation = "http://api.axado.com.br/v2/cotacao/";
 
     /**
      * Token for consult quotations.
@@ -37,7 +44,7 @@ class Request
     {
         $raw = $this->doRequest(
             "POST",
-            $this->urlConsult . $this->token,
+            static::$urlConsult . $this->token,
             $jsonString
         );
 
@@ -56,6 +63,26 @@ class Request
         $response->parse($raw);
 
         return $response;
+    }
+
+    /**
+     * Flagging the quotation elected to Axado API.
+     *
+     * @param  AxadoShipping $shipping
+     * @param  string $token
+     * @return null
+     */
+    public function flagAsContracted(\Axado\Shipping $shipping, $quotationToken)
+    {
+        $jsonString    = json_encode(["status" => 2]);
+        $quotationCode = $shipping->getQuotationElected()->getQuotationCode();
+        $token         = $this->token;
+
+        $raw = $this->doRequest(
+            "PUT",
+            static::$urlQuotation . $quotationToken ."/". $quotationCode . '/status/' . "?token=" . $token,
+            $jsonString
+        );
     }
 
     /**
