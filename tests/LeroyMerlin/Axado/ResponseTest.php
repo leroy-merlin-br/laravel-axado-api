@@ -24,6 +24,7 @@ class ResponseTest extends TestCase
     {
         // Set
         $response = m::mock('Axado\Response[parseQuotations,isError]');
+        $response->shouldAllowMockingProtectedMethods();
 
         // Expect
         $response->shouldReceive('isError')
@@ -32,10 +33,10 @@ class ResponseTest extends TestCase
 
         $response->shouldReceive('parseQuotations')
             ->once()
-            ->with([]);
+            ->with(['raw' => '12.0']);
 
         // Assert
-        $response->parse("{ raw: '12.0' }");
+        $response->parse(['raw' => '12.0']);
         $this->assertTrue($response->isOk());
     }
 
@@ -43,6 +44,7 @@ class ResponseTest extends TestCase
     {
         // Set
         $response = m::mock('Axado\Response[parseQuotations,isError]');
+        $response->shouldAllowMockingProtectedMethods();
 
         // Expect
         $response->shouldReceive('isError')
@@ -64,10 +66,23 @@ class ResponseTest extends TestCase
         $data = ["right object" => true];
 
         // Expect
-        $result = $response->isError($data);
+        $result = $this->callProtected($response, 'isError', [$data]);
 
         // Assert
         $this->assertFalse($result);
+    }
+
+    public function testShouldReturnTrueIfHasError()
+    {
+        // Set
+        $response = new Response;
+        $data = ["erro_id" => '123', "erro_msg" => 'cep não encontrado'];
+
+        // Expect
+        $result =  $this->callProtected($response, 'isError', [$data]);
+
+        // Assert
+        $this->assertTrue($result);
     }
 
     public function testShouldParseQuotations()
@@ -84,7 +99,7 @@ class ResponseTest extends TestCase
         ];
 
         // Act
-        $response->parseQuotations($data);
+        $this->callProtected($response, 'parseQuotations', [$data]);
         $result = $response->quotations();
 
         // Assert

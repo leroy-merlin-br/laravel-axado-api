@@ -7,7 +7,6 @@ use \Axado\Formatter\JsonFormatter;
 
 class JsonFormatterTest extends TestCase
 {
-
     public function tearDown()
     {
         parent::tearDown();
@@ -22,7 +21,7 @@ class JsonFormatterTest extends TestCase
         $attributes = ['preco' => 10.5, 'unidade' => 10];
 
         // Expect
-        $instance->shouldReceive('getAllAttributes')
+        $instance->shouldReceive('getAttributes')
             ->once()
             ->andReturn($attributes);
 

@@ -26,7 +26,11 @@ class RequestTest extends TestCase
 
         // Expect
         $request->shouldReceive('doRequest')
-            ->with("POST", "http://api.axado.com.br/v2/consulta/?token=$token", $data)
+            ->with(
+                "POST",
+                "http://api.axado.com.br/v2/consulta/?token=$token",
+                $data
+            )
             ->once()
             ->andReturn($raw);
 

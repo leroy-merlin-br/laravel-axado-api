@@ -37,13 +37,22 @@ class Response
     }
 
     /**
+     * Returns if the response was Ok.
+     * @return boolean
+     */
+    public function isOk()
+    {
+        return (boolean)$this->isOk;
+    }
+
+    /**
      * Parse the response to this object.
-     * @param  string $raw
+     * @param  array $raw
      * @return null
      */
     public function parse($raw = null)
     {
-        $arrayResponse = json_decode($raw);
+        $arrayResponse = $raw;
 
         if (! $this->isError($arrayResponse)) {
             $this->parseQuotations($arrayResponse);
@@ -58,9 +67,13 @@ class Response
      * @param  array $arrayResponse
      * @return null
      */
-    public function parseQuotations($arrayResponse)
+    protected function parseQuotations($arrayResponse)
     {
-        $quotationsArray = isset($arrayResponse['cotacoes']) ? $arrayResponse['cotacoes'] : [];
+        $quotationsArray = [];
+
+        if (isset($arrayResponse['cotacoes'])) {
+            $quotationsArray = $arrayResponse['cotacoes'];
+        }
 
         foreach ($quotationsArray as $quotationArray) {
             $quotation = new Quotation;
@@ -75,7 +88,7 @@ class Response
      * @param  array  $arrayResponse
      * @return boolean
      */
-    public function isError($arrayResponse)
+    protected function isError($arrayResponse)
     {
         if (! $arrayResponse || isset($arrayResponse['erro_id'])) {
             $this->errorId      = $arrayResponse['erro_id'];
@@ -85,14 +98,5 @@ class Response
         }
 
         return false;
-    }
-
-    /**
-     * Returns if the response was Ok.
-     * @return boolean
-     */
-    public function isOk()
-    {
-        return (boolean)$this->isOk;
     }
 }

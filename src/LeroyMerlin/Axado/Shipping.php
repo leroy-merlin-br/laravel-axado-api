@@ -63,32 +63,49 @@ class Shipping
         }
     }
 
-    /**
-     * Return this object in json format.
-     *
-     * @return string
-     */
-    public function toJson()
-    {
-        $this->formatter->setInstance($this);
-
-        return $this->formatter->format();
-    }
-
-    /**
+    /*
      * Consult this shipping through api.
      *
      * @return boolean
      */
     public function quotations()
     {
-        if ($this->response) {
-            return $this->response->quotations();
-        } else {
-            $this->response = $this->request->consultShipping($this->toJson());
+        if (! $this->response) {
+            $request = $this->newRequest(static::$token);
+            $this->response = $request->consultShipping($this->toJson());
         }
 
-        return $this->response;
+        return $this->response->quotations();
+    }
+
+    /**
+     * Get the first quotation and return the price.
+     * @return integer
+     */
+    public function getCosts()
+    {
+        $quotation = $this->firstQuotation();
+
+        if ($quotation) {
+            return $quotation->quotation_price;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the first quotation and return the price.
+     * @return integer
+     */
+    public function getDeadline()
+    {
+        $quotation = $this->firstQuotation();
+
+        if ($quotation) {
+            return $quotation->deadline;
+        }
+
+        return null;
     }
 
     /**
@@ -179,5 +196,43 @@ class Shipping
     public function clearVolumes()
     {
         $this->volumes = [];
+    }
+
+    /**
+     * Returns a new instance of Request.
+     *
+     * @param  string $token
+     * @return Axado\Request
+     */
+    protected function newRequest($token)
+    {
+        return new Request($token);
+    }
+
+    /**
+     * Returns the first quotation.
+     * @return Quotation
+     */
+    protected function firstQuotation()
+    {
+        $quotations = (array)$this->quotations();
+
+        if (isset($quotations[0])) {
+            return $quotations[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * Return this object in json format.
+     *
+     * @return string
+     */
+    protected function toJson()
+    {
+        $this->formatter->setInstance($this);
+
+        return $this->formatter->format();
     }
 }

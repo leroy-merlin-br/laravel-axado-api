@@ -25,7 +25,7 @@ class JsonFormatter implements FormatterInterface
      */
     public function format()
     {
-        $attributes = $this->instance->getAllAttributes();
+        $attributes = $this->instance->getAttributes();
         $volumes    = $this->instance->allVolumes();
 
         foreach ($volumes as $index => $volume) {

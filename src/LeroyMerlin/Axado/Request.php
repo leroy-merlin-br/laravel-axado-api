@@ -30,7 +30,12 @@ class Request
      */
     public function consultShipping($jsonString)
     {
-        $raw = $this->doRequest("POST", $this->urlConsult . $this->token, $jsonString);
+        $raw = $this->doRequest(
+            "POST",
+            $this->urlConsult . $this->token,
+            $jsonString
+        );
+
         return $this->createResponse($raw);
     }
 
