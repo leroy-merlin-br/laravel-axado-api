@@ -7,6 +7,7 @@ Laravel Axado API
 
 [![Build Status](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/build.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/build-status/master)
 
+[![Build Status](https://travis-ci.org/leroy-merlin-br/laravel-axado-api.svg)](https://travis-ci.org/leroy-merlin-br/laravel-axado-api)
 A wrapper to Axado API.
 
 ## Get started
