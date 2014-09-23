@@ -30,7 +30,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "~4.2",
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "satooshi/php-coveralls": "dev-master"
     },
     "config": {
         "preferred-install": "dist"

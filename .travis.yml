@@ -9,4 +9,8 @@ before_script:
   - php composer.phar install --dev
 
 script:
-  - phpunit
+  - mkdir -p build/logs
+  - phpunit -c phpunit.xml.dist
+
+after_script:
+  - php vendor/bin/coveralls -v
