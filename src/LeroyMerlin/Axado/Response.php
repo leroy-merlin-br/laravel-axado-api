@@ -59,7 +59,7 @@ class Response
      */
     public function parse($raw = null)
     {
-        $arrayResponse = $raw;
+        $arrayResponse = (array)$raw;
 
         if (! $this->isError($arrayResponse)) {
             $this->parseQuotations($arrayResponse);
@@ -75,7 +75,7 @@ class Response
      * @param  array $arrayResponse
      * @return null
      */
-    protected function parseQuotations($arrayResponse)
+    protected function parseQuotations(array $arrayResponse)
     {
         $quotationsArray = [];
 

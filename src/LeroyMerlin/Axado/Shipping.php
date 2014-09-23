@@ -57,14 +57,14 @@ class Shipping
     /**
      * Axado\Response instance.
      *
-     * @var Axado\Request
+     * @var Axado\Response
      */
     protected $response;
 
     /**
      * Constructor
      *
-     * @param FormatterInterface $formatter
+     * @param \Axado\Formatter\FormatterInterface $formatter
      */
     public function __construct(FormatterInterface $formatter = null)
     {

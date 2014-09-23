@@ -6,7 +6,7 @@ interface FormatterInterface {
     /**
      * Setter for Shipping instance inside Formatter.
      *
-     * @param AxadoShipping $instance
+     * @param \Axado\Shipping $instance
      * @return null
      */
     public function setInstance(\Axado\Shipping $instance);
