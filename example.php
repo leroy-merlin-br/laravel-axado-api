@@ -3,7 +3,7 @@
 include "vendor/autoload.php";
 
 /**
- * Implents the Axado\Volume\VolumeInterface and uses Axado\Volume\VolumeTrait.
+ * Implements the Axado\Volume\VolumeInterface and uses Axado\Volume\VolumeTrait.
  */
 class Stub implements Axado\Volume\VolumeInterface {
     use Axado\Volume\VolumeTrait;
