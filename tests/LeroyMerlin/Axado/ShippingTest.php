@@ -99,105 +99,129 @@ class ShippingTest extends TestCase
 
     public function testShouldReturnTheGetCostsPropertly()
     {
-        $shipping = m::mock('Axado\Shipping[firstQuotation]');
+        // Set
+        $shipping  = m::mock('Axado\Shipping[firstQuotation]');
         $quotation = m::mock('Axado\Quotation');
-        $expected = 10.5;
+        $expected  = 10.5;
         $quotation->quotation_price = $expected;
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $shipping->shouldReceive('firstQuotation')
             ->once()
             ->andReturn($quotation);
 
+        // Act
         $result = $shipping->getCosts();
 
+        // Assert
         $this->assertEquals($expected, $result);
     }
 
     public function testShouldReturnNullGettingCostsIfHasNotQuotation()
     {
+        // Set
         $shipping = m::mock('Axado\Shipping[firstQuotation]');
-
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $shipping->shouldReceive('firstQuotation')
             ->once()
             ->andReturn([]);
 
+        // Act
         $result = $shipping->getCosts();
 
+        // Assert
         $this->assertNull($result);
     }
 
     public function testShouldReturnTheGetDeadlinePropertly()
     {
-        $shipping = m::mock('Axado\Shipping[firstQuotation]');
+        // Set
+        $shipping  = m::mock('Axado\Shipping[firstQuotation]');
         $quotation = m::mock('Axado\Quotation');
-        $expected = 4;
+        $expected  = 4;
         $quotation->deadline = $expected;
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $shipping->shouldReceive('firstQuotation')
             ->once()
             ->andReturn($quotation);
 
+        // Act
         $result = $shipping->getDeadline();
 
+        // Assert
         $this->assertEquals($expected, $result);
     }
 
     public function testShouldReturnNullGettingDeadlineIfHasNotQuotation()
     {
+        // Set
         $shipping = m::mock('Axado\Shipping[firstQuotation]');
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $shipping->shouldReceive('firstQuotation')
             ->once()
             ->andReturn([]);
 
+        // Act
         $result = $shipping->getDeadline();
 
+        // Assert
         $this->assertNull($result);
     }
 
 
     public function testShouldGetFirstQuotation()
     {
-        $shipping = m::mock('Axado\Shipping[quotations]');
+        // Set
+        $shipping  = m::mock('Axado\Shipping[quotations]');
         $quotation = m::mock('Axado\Quotation');
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $shipping->shouldReceive('quotations')
             ->once()
             ->andReturn([$quotation]);
 
+        // Act
         $result = $this->callProtected($shipping, 'firstQuotation');
 
+        // Assert
         $this->assertEquals($quotation, $result);
     }
 
     public function testShouldReturnNullIfHasNoQuotation()
     {
-        $shipping = m::mock('Axado\Shipping[quotations]');
+        // Set
+        $shipping  = m::mock('Axado\Shipping[quotations]');
         $quotation = m::mock('Axado\Quotation');
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $shipping->shouldReceive('quotations')
             ->once()
             ->andReturn([]);
 
+        // Act
         $result = $this->callProtected($shipping, 'firstQuotation');
 
+        // Assert
         $this->assertNull($result);
     }
 
     public function testShouldReturnQuotations()
     {
+        // Set
         $shipping  = m::mock('Axado\Shipping[newRequest]');
         $token     = '123466';
         $request   = m::mock('Axado\Request[consultShipping,quotations]', [$token]);
@@ -208,6 +232,7 @@ class ShippingTest extends TestCase
 
         $shipping->shouldAllowMockingProtectedMethods();
 
+        // Expect
         $request->shouldReceive('consultShipping')
             ->with('[]')
             ->once()
@@ -222,16 +247,20 @@ class ShippingTest extends TestCase
             ->with($token)
             ->andReturn($request);
 
+        // Act
         $shipping->quotations();
         $shipping->quotations();
     }
 
     public function testShouldReturnANewInstanceOfRequest()
     {
+        // Set
         $shipping = new Shipping;
 
+        // Act
         $result = $this->callProtected($shipping, 'newRequest', '12345');
 
+        // Assert
         $this->assertTrue($result instanceof \Axado\Request);
     }
 }

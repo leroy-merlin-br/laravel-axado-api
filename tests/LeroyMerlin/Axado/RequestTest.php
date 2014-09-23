@@ -47,10 +47,13 @@ class RequestTest extends TestCase
 
     public function testShouldReturnResponseObject()
     {
+        // Set
         $shipping = m::mock(new Request('2020'));
 
+        // Act
         $result = $shipping->createResponse('raw');
 
+        // Assert
         $this->assertTrue($result instanceof \Axado\Response);
     }
 }

@@ -15,6 +15,7 @@ class QuotationTest extends TestCase
 
     public function testShouldFillCorrectly()
     {
+        // Set
         $quotation = new Quotation;
 
         $data = [
@@ -27,9 +28,11 @@ class QuotationTest extends TestCase
             "non field"               => 'non value'
         ];
 
+        // Act
         $quotation->fill($data);
-
         $result = $quotation->attributes();
+
+        // Assert
         $expected = [
             'name'             => 'Correiros',
             'service_metaname' => 'Correios-pac',

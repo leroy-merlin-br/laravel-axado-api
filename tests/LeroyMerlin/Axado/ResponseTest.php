@@ -13,14 +13,16 @@ class ResponseTest extends TestCase
         m::close();
     }
 
-    public function testShouldReturnPropertlyIsOk()
+    public function testShouldReturnFalseWhenCallForEmptyResponseIfIsOk()
     {
+        // Set
         $response = new Response;
 
+        // Assert
         $this->assertFalse($response->isOk());
     }
 
-    public function testShouldParse()
+    public function testShouldParseTheResponseRaw()
     {
         // Set
         $response = m::mock('Axado\Response[parseQuotations,isError]');
