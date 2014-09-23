@@ -78,7 +78,7 @@ class Shipping
     /**
      * Consult this shipping through api.
      *
-     * @return boolean
+     * @return array
      */
     public function quotations()
     {

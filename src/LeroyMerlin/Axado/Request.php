@@ -31,6 +31,7 @@ class Request
      * Runs the request to Axado API and return a Response Object.
      *
      * @param  string $jsonString
+     * @return \Axado\Response
      */
     public function consultShipping($jsonString)
     {
@@ -47,7 +48,7 @@ class Request
      * Return the Response instance.
      *
      * @param  string $raw
-     * @return Response
+     * @return \Axado\Response
      */
     protected function createResponse($raw)
     {
