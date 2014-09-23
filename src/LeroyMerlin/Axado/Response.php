@@ -5,30 +5,35 @@ class Response
 {
     /**
      * If the request is ok.
+     *
      * @var boolean
      */
     protected $isOk;
 
     /**
-     * Error id sended by Axado.
+     * Error_id sended by Axado.
+     *
      * @var boolean
      */
     protected $errorId;
 
     /**
-     * The message sended by Axado.
+     * The error message sended by Axado.
+     *
      * @var boolean
      */
     protected $errorMessage;
 
     /**
      * Array of Axado\Quotation.
+     *
      * @var array
      */
     protected $quotations = [];
 
     /**
      * Getter for quotations.
+     *
      * @return array
      */
     public function quotations()
@@ -38,6 +43,7 @@ class Response
 
     /**
      * Returns if the response was Ok.
+     *
      * @return boolean
      */
     public function isOk()
@@ -46,7 +52,8 @@ class Response
     }
 
     /**
-     * Parse the response to this object.
+     * Parse the raw response to this object.
+     *
      * @param  array $raw
      * @return null
      */
@@ -63,7 +70,8 @@ class Response
     }
 
     /**
-     * Parse the response into Quotation objects
+     * Parse the response into Quotation objects.
+     *
      * @param  array $arrayResponse
      * @return null
      */

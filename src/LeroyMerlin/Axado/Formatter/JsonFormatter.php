@@ -6,13 +6,13 @@ class JsonFormatter implements FormatterInterface
 
     /**
      * Axado\Shipping instance.
+     *
      * @var Axado\Shipping
      */
     protected $instance;
 
     /**
-     * Setter for instance.
-     * @param VolumeInterface $instance
+     * {@inheritdoc}
      */
     public function setInstance(\Axado\Shipping $instance)
     {
@@ -20,8 +20,7 @@ class JsonFormatter implements FormatterInterface
     }
 
     /**
-     * Format the attributes for instance given.
-     * @return string
+     * {@inheritdoc}
      */
     public function format()
     {

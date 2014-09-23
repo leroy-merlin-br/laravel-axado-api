@@ -4,19 +4,22 @@ namespace Axado;
 class Request
 {
     /**
-     * Api url
+     * The de API url.
+     *
      * @var string
      */
     protected $urlConsult = "http://api.axado.com.br/v2/consulta/?token=";
 
     /**
-     * Token string
+     * Token for consult quotations.
+     *
      * @var string
      */
     protected $token;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $token
      */
     public function __construct($token)
@@ -25,7 +28,8 @@ class Request
     }
 
     /**
-     * Do the consult for shipping
+     * Runs the request to Axado API and return a Response Object.
+     *
      * @param  string $jsonString
      */
     public function consultShipping($jsonString)
@@ -40,7 +44,8 @@ class Request
     }
 
     /**
-     * Return the response instance.
+     * Return the Response instance.
+     *
      * @param  string $raw
      * @return Axado\Response
      */
@@ -54,6 +59,7 @@ class Request
 
     /**
      * Request to Axado API.
+     *
      * @codeCoverageIgnore
      * @return string
      */

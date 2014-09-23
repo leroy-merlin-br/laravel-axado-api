@@ -4,13 +4,16 @@ namespace Axado\Formatter;
 interface FormatterInterface {
 
     /**
-     * Set Axado\Shipping instance.
+     * Setter for Shipping instance inside Formatter.
+     *
+     * @param AxadoShipping $instance
      */
     public function setInstance(\Axado\Shipping $instance);
 
     /**
-     * Formats the instance given.
-     * @return a data format
+     * Format the instance given.
+     *
+     * @return string
      */
     public function format();
 }

@@ -4,7 +4,8 @@ namespace Axado;
 class Quotation {
 
     /**
-     * All fields could be parsed.
+     * Fields with be parsed after the response is returned.
+     *
      * @var array
      */
     protected $possibleAttr = [
@@ -17,13 +18,15 @@ class Quotation {
     ];
 
     /**
-     * Attributes Parsed.
+     * Attributes parsed.
+     *
      * @var array
      */
     protected $attributes = [];
 
     /**
      * Fill this object with raw attributes given by Response.
+     *
      * @param  array $rawAttributes
      * @return null
      */
@@ -39,7 +42,8 @@ class Quotation {
     }
 
     /**
-     * Return all attributes.
+     * Return all attributes parsed.
+     *
      * @return array
      */
     public function attributes()

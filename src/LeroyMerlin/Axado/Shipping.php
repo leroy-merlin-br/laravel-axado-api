@@ -63,7 +63,7 @@ class Shipping
         }
     }
 
-    /*
+    /**
      * Consult this shipping through api.
      *
      * @return boolean
@@ -80,6 +80,7 @@ class Shipping
 
     /**
      * Get the first quotation and return the price.
+     *
      * @return integer
      */
     public function getCosts()
@@ -95,6 +96,7 @@ class Shipping
 
     /**
      * Get the first quotation and return the price.
+     *
      * @return integer
      */
     public function getDeadline()
@@ -211,6 +213,7 @@ class Shipping
 
     /**
      * Returns the first quotation.
+     *
      * @return Quotation
      */
     protected function firstQuotation()
