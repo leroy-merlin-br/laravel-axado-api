@@ -1,6 +1,12 @@
 Laravel Axado API
 =================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/?branch=master)
+
+[![Code Coverage](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/?branch=master)
+
+[![Build Status](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/build.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/build-status/master)
+
 A wrapper to Axado API.
 
 ## Get started
