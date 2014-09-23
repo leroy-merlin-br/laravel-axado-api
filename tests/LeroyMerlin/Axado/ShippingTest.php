@@ -92,9 +92,25 @@ class ShippingTest extends TestCase
         $this->assertEquals($result, $expected);
     }
 
-    public function testShouldValidShippingBeforeRequesting()
+    /**
+     * @expectedException Axado\ShippingException
+     * @return [type] [description]
+     */
+    public function testShouldThrowAxadoExceptionWhenTheShippingIsNotValid()
     {
-        $this->assertTrue(false);
+        // Set
+        $shipping  = m::mock('Axado\Shipping[isValid]');
+
+        $shipping->shouldAllowMockingProtectedMethods();
+
+        // Expect
+
+        $shipping->shouldReceive('isValid')
+            ->once()
+            ->andReturn(false);
+
+        // Act
+        $shipping->quotations();
     }
 
     public function testShouldReturnTheGetCostsPropertly()
@@ -222,7 +238,7 @@ class ShippingTest extends TestCase
     public function testShouldReturnQuotations()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[newRequest]');
+        $shipping  = m::mock('Axado\Shipping[newRequest,isValid]');
         $token     = '123466';
         $request   = m::mock('Axado\Request[consultShipping,quotations]', [$token]);
         $quotation = m::mock('Axado\Quotation');
@@ -247,6 +263,10 @@ class ShippingTest extends TestCase
             ->with($token)
             ->andReturn($request);
 
+        $shipping->shouldReceive('isValid')
+            ->twice()
+            ->andReturn(true);
+
         // Act
         $shipping->quotations();
         $shipping->quotations();
@@ -262,5 +282,64 @@ class ShippingTest extends TestCase
 
         // Assert
         $this->assertTrue($result instanceof \Axado\Request);
+    }
+
+    public function testShouldVerifyIfThisInstanceIsValid()
+    {
+        // Set
+        $shipping = new Shipping;
+        $volume   = m::mock('Axado\Volume\VolumeInterface');
+
+        $shipping->setPostalCodeOrigin('123123');
+        $shipping->setPostalCodeDestination('01010');
+        $shipping->setTotalPrice('21.2');
+        $shipping->setAditionalDays('12');
+        $shipping->setAditionalPrice('12.6');
+
+        $shipping->addVolume($volume);
+
+        // Act
+        $result = $this->callProtected($shipping, 'isValid');
+
+        // Assert
+        $this->assertTrue($result);
+    }
+
+    public function testShouldInvalidWhenVolumeIsEmpty()
+    {
+        // Set
+        $shipping = new Shipping;
+
+        $shipping->setPostalCodeOrigin('123123');
+        $shipping->setPostalCodeDestination('01010');
+        $shipping->setTotalPrice('21.2');
+        $shipping->setAditionalDays('12');
+        $shipping->setAditionalPrice('12.6');
+
+        // Act
+        $result = $this->callProtected($shipping, 'isValid');
+
+        // Assert
+        $this->assertFalse($result);
+    }
+
+    public function testShouldInvalidWhenIsEmpty()
+    {
+        // Set
+        $shipping = new Shipping;
+        $volume   = m::mock('Axado\Volume\VolumeInterface');
+
+        $shipping->setPostalCodeOrigin('123123');
+        $shipping->setPostalCodeDestination('01010');
+        $shipping->setAditionalDays('12');
+        $shipping->setAditionalPrice('12.6');
+
+        $shipping->addVolume($volume);
+
+        // Act
+        $result = $this->callProtected($shipping, 'isValid');
+
+        // Assert
+        $this->assertFalse($result);
     }
 }

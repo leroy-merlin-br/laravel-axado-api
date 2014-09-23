@@ -15,6 +15,18 @@ class Shipping
     protected $attributes = [];
 
     /**
+     * Requires fields in Shipping.
+     * @var array
+     */
+    public static $requiredFields = [
+        'preco_adicional',
+        'cep_origem',
+        'cep_destino',
+        'valor_notafiscal',
+        'prazo_adicional'
+    ];
+
+    /**
      * Token string to Axado.
      *
      * @var string
@@ -52,7 +64,7 @@ class Shipping
     /**
      * Constructor
      *
-     * @param Request $request
+     * @param FormatterInterface $formatter
      */
     public function __construct(FormatterInterface $formatter = null)
     {
@@ -70,6 +82,10 @@ class Shipping
      */
     public function quotations()
     {
+        if (! $this->isValid()) {
+            throw new ShippingException("This shipping was not filled correctly", 1);
+        }
+
         if (! $this->response) {
             $request = $this->newRequest(static::$token);
             $this->response = $request->consultShipping($this->toJson());
@@ -127,7 +143,7 @@ class Shipping
      */
     public function setPostalCodeOrigin($cep)
     {
-        $this->attributes["cep_origem"] = $cep;
+        $this->attributes["cep_origem"] = (string)$cep;
     }
 
     /**
@@ -137,7 +153,7 @@ class Shipping
      */
     public function setPostalCodeDestination($cep)
     {
-        $this->attributes["cep_destino"] = $cep;
+        $this->attributes["cep_destino"] = (string)$cep;
     }
 
     /**
@@ -163,7 +179,7 @@ class Shipping
     /**
      * Setter to Additional price to add to shipping costs.
      *
-     * @param float $cep
+     * @param float $price
      */
     public function setAditionalPrice($price)
     {
@@ -204,7 +220,7 @@ class Shipping
      * Returns a new instance of Request.
      *
      * @param  string $token
-     * @return Axado\Request
+     * @return Request
      */
     protected function newRequest($token)
     {
@@ -237,5 +253,25 @@ class Shipping
         $this->formatter->setInstance($this);
 
         return $this->formatter->format();
+    }
+
+    /**
+     * Verify is this instance is Valid.
+     *
+     * @return boolean
+     */
+    protected function isValid()
+    {
+        foreach (static::$requiredFields as $field) {
+            if (! isset($this->attributes[$field]) || ! $this->attributes[$field] ) {
+                return false;
+            }
+        }
+
+        if (! $this->volumes) {
+            return false;
+        }
+
+        return true;
     }
 }

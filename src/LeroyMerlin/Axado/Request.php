@@ -47,7 +47,7 @@ class Request
      * Return the Response instance.
      *
      * @param  string $raw
-     * @return Axado\Response
+     * @return Response
      */
     protected function createResponse($raw)
     {
@@ -61,7 +61,11 @@ class Request
      * Request to Axado API.
      *
      * @codeCoverageIgnore
-     * @return string
+     * @param string $method
+     * @param string $path
+     * @param string $data
+     *
+     * @return array
      */
     protected function doRequest($method, $path, $data)
     {
