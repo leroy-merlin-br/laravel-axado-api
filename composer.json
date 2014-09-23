@@ -25,9 +25,6 @@
             "tests/TestCase.php"
         ]
     },
-    "require": {
-        "laravel/framework" : "~4.2"
-    },
     "require-dev": {
         "phpunit/phpunit": "~4.2",
         "mockery/mockery": "dev-master",
