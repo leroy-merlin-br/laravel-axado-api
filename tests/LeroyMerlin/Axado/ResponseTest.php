@@ -87,6 +87,19 @@ class ResponseTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testShouldReturnTrueIfHasEmptyArrayError()
+    {
+        // Set
+        $response = new Response;
+        $data = [];
+
+        // Expect
+        $result =  $this->callProtected($response, 'isError', [$data]);
+
+        // Assert
+        $this->assertTrue($result);
+    }
+
     public function testShouldParseQuotations()
     {
         // Set

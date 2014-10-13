@@ -109,10 +109,14 @@ class Response
      */
     protected function isError($arrayResponse)
     {
-        if (! $arrayResponse || isset($arrayResponse['erro_id'])) {
+        if (isset($arrayResponse['erro_id'])) {
             $this->errorId      = $arrayResponse['erro_id'];
             $this->errorMessage = $arrayResponse['erro_msg'];
 
+            return true;
+        }
+
+        if (! $arrayResponse) {
             return true;
         }
 
