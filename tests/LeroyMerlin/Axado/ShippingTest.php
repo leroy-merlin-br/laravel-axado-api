@@ -217,7 +217,7 @@ class ShippingTest extends TestCase
             ->andReturn([$quotation]);
 
         // Act
-        $result = $this->callProtected($shipping, 'firstQuotation');
+        $result = $shipping->firstQuotation();
 
         // Assert
         $this->assertEquals($quotation, $result);

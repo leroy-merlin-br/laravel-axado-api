@@ -269,7 +269,7 @@ class Shipping
      *
      * @return Quotation
      */
-    protected function firstQuotation()
+    public function firstQuotation()
     {
         $quotations = (array)$this->quotations();
 
