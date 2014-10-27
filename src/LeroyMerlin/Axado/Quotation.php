@@ -90,4 +90,15 @@ class Quotation {
 
         return null;
     }
+
+    /**
+     * Magic attribute getter
+     *
+     * @param  string $attrName Attribute name
+     * @return mixed
+     */
+    public function __get($attrName)
+    {
+        return isset($this->attributes[$attrName]) ? $this->attributes[$attrName] : null;
+    }
 }

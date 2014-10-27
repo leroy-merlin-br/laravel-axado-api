@@ -105,4 +105,22 @@ class QuotationTest extends TestCase
         // Assert
         $this->assertEquals("12", $quotation->getDeadline());
     }
+
+    public function testShouldGetAttributes()
+    {
+        // Set
+        $quotation = new Quotation;
+
+        $data = [
+            "transportadora_metaname" => "FooBar"
+        ];
+        // Act
+        $quotation->fill($data);
+
+        // Assert
+        $this->assertEquals(
+            'FooBar',
+            $quotation->name
+        );
+    }
 }
