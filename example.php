@@ -32,9 +32,11 @@ $shipping = new Axado\Shipping;
  */
 $shipping->setPostalCodeOrigin('04661100');
 $shipping->setPostalCodeDestination('13301430');
+$shipping->setAditionalPrice('12.6%');
 $shipping->setTotalPrice('40');
 $shipping->setAditionalDays('10');
-$shipping->setAditionalPrice('12.6');
+
+dd($shipping->getAttributes());
 
 /**
  * Add volumes to shipping

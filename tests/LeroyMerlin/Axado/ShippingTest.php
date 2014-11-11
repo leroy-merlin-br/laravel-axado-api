@@ -393,4 +393,44 @@ class ShippingTest extends TestCase
         // Assert
         $this->assertEquals($quotation, $shipping->getQuotationElected());
     }
+
+    public function testShouldSetAditionalPriceValueAsPercentage()
+    {
+        // Set
+        $shipping = new Shipping;
+
+        $shipping->setTotalPrice('100.10');
+        $shipping->setAditionalPrice('12%');
+
+        $expected = [
+            "valor_notafiscal" => 100.1,
+            "preco_adicional"  => 12.012
+        ];
+
+        // Act
+        $result = $shipping->getAttributes();
+
+        // Assert
+        $this->assertEquals($result, $expected);
+    }
+
+    public function testShouldRecalculateAditionalPricePercentageWhenSetTotalPrice()
+    {
+        // Set
+        $shipping = new Shipping;
+
+        $shipping->setAditionalPrice('12%');
+        $shipping->setTotalPrice('85.10');
+
+        $expected = [
+            "valor_notafiscal" => 85.10,
+            "preco_adicional"  => 10.212
+        ];
+
+        // Act
+        $result = $shipping->getAttributes();
+
+        // Assert
+        $this->assertEquals($result, $expected);
+    }
 }

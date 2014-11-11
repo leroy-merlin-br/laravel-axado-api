@@ -201,6 +201,28 @@ class Shipping
     public function setTotalPrice($price)
     {
         $this->attributes["valor_notafiscal"] = (float)$price;
+
+        $this->setAditionalPrice($this->getAditionalPrice());
+    }
+
+    /**
+     * Getter to Total price of sale.
+     *
+     * @param float $price
+     */
+    public function getTotalPrice()
+    {
+        return @$this->attributes["valor_notafiscal"];
+    }
+
+    /**
+     * Getter to of aditional price.
+     *
+     * @param float $price
+     */
+    public function getAditionalPrice()
+    {
+        return @$this->attributes["preco_adicional"];
     }
 
     /**
@@ -220,7 +242,37 @@ class Shipping
      */
     public function setAditionalPrice($price)
     {
-        $this->attributes["preco_adicional"] = (float)$price;
+        $aditionalPrice = $this->calculateAditionalPrice($price);
+
+        $this->attributes["preco_adicional"] = $aditionalPrice;
+    }
+
+    /**
+     * Calculate the aditional price.
+     * @param  string $price
+     * @return float
+     */
+    public function calculateAditionalPrice($price)
+    {
+        $tempPrice  = $price;
+        $totalPrice = $this->getTotalPrice();
+
+        if (preg_match('/%/', $price) && (float)$price && $totalPrice) {
+
+            $price = (float)$price;
+
+            if ($price) {
+                $price = $totalPrice * $price / 100;
+            } else {
+                $price = $tempPrice;
+            }
+        } else {
+            $price = $tempPrice;
+        }
+
+
+
+        return $price;
     }
 
     /**
