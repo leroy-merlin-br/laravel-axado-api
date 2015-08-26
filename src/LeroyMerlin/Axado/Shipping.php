@@ -96,7 +96,10 @@ class Shipping
     public function quotations()
     {
         if (! $this->isValid()) {
-            throw new ShippingException("This shipping was not filled correctly", 1);
+            throw new ShippingException(
+                "This shipping was not filled correctly", 
+                1
+            );
         }
 
         if (! $this->response) {

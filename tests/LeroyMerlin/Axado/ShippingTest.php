@@ -94,7 +94,7 @@ class ShippingTest extends TestCase
 
     /**
      * @expectedException Axado\ShippingException
-     * @return [type] [description]
+     * @expectedExceptionMessage This shipping was not filled correctly
      */
     public function testShouldThrowAxadoExceptionWhenTheShippingIsNotValid()
     {
