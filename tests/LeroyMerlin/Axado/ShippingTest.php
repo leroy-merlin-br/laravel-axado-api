@@ -93,7 +93,7 @@ class ShippingTest extends TestCase
     }
 
     /**
-     * @expectedException Axado\ShippingException
+     * @expectedException Axado\Exception\ShippingException
      * @expectedExceptionMessage This shipping was not filled correctly
      */
     public function testShouldThrowAxadoExceptionWhenTheShippingIsNotValid()
@@ -223,6 +223,10 @@ class ShippingTest extends TestCase
         $this->assertEquals($quotation, $result);
     }
 
+    /**
+     * @expectedException \Axado\Exception\QuotationNotFoundException
+     * @expectedExceptionMessage No quotations were found to the given CEP
+     */
     public function testShouldReturnNullIfHasNoQuotation()
     {
         // Set
@@ -237,10 +241,7 @@ class ShippingTest extends TestCase
             ->andReturn([]);
 
         // Act
-        $result = $this->callProtected($shipping, 'firstQuotation');
-
-        // Assert
-        $this->assertNull($result);
+        $this->callProtected($shipping, 'firstQuotation');
     }
 
     public function testShouldReturnQuotations()
