@@ -1,6 +1,8 @@
 <?php
 namespace Axado;
 
+use Axado\Exception\ShippingException;
+use Axado\Exception\QuotationNotFoundException;
 use Axado\Formatter\JsonFormatter;
 use Axado\Volume\VolumeInterface;
 use Axado\Formatter\FormatterInterface;
@@ -96,7 +98,10 @@ class Shipping
     public function quotations()
     {
         if (! $this->isValid()) {
-            throw new ShippingException("This shipping was not filled correctly", 1);
+            throw new ShippingException(
+                "This shipping was not filled correctly", 
+                1
+            );
         }
 
         if (! $this->response) {
@@ -325,12 +330,15 @@ class Shipping
     {
         $quotations = (array)$this->quotations();
 
-        if (isset($quotations[0])) {
-            $this->quotationElected = $quotations[0];
-            return $quotations[0];
+        if (false === isset($quotations[0])) {
+            throw new QuotationNotFoundException(
+                'No quotations were found to the given CEP'
+            );
         }
 
-        return null;
+        $this->quotationElected = $quotations[0];
+            
+        return $quotations[0];  
     }
 
     /**
