@@ -225,7 +225,7 @@ class ShippingTest extends TestCase
 
     /**
      * @expectedException \Axado\Exception\QuotationNotFoundException
-     * @expectedExceptionMessage No quotations were found to the given CEP
+     * @expectedExceptionMessage No quotations were found to the given CEP: 01234-000
      */
     public function testShouldReturnNullIfHasNoQuotation()
     {
@@ -234,6 +234,8 @@ class ShippingTest extends TestCase
         $quotation = m::mock('Axado\Quotation');
 
         $shipping->shouldAllowMockingProtectedMethods();
+
+        $shipping->setPostalCodeDestination('01234-000');
 
         // Expect
         $shipping->shouldReceive('quotations')

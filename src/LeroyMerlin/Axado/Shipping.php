@@ -332,13 +332,26 @@ class Shipping
 
         if (false === isset($quotations[0])) {
             throw new QuotationNotFoundException(
-                'No quotations were found to the given CEP'
+                sprintf(
+                    'No quotations were found to the given CEP: %s',
+                    $this->getPostalCodeDestination()
+                )
             );
         }
 
         $this->quotationElected = $quotations[0];
             
         return $quotations[0];  
+    }
+
+    /**
+     * Getter of postal code destination
+     *
+     * @return string
+     */
+    protected function getPostalCodeDestination()
+    {
+        return @$this->attributes["cep_destino"];
     }
 
     /**
