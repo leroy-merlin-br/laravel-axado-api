@@ -34,11 +34,9 @@ class Shipping
      * @var array
      */
     public static $requiredFields = [
-        'preco_adicional',
         'cep_origem',
         'cep_destino',
         'valor_notafiscal',
-        'prazo_adicional'
     ];
 
     /**
