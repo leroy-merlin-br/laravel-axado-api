@@ -100,7 +100,7 @@ class Request
         $conn = curl_init();
 
         curl_setopt($conn, CURLOPT_URL, $path);
-        curl_setopt($conn, CURLOPT_TIMEOUT, 5);
+        curl_setopt($conn, CURLOPT_TIMEOUT, 15);
         curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1) ;
         curl_setopt($conn, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($conn, CURLOPT_FORBID_REUSE, 1);
