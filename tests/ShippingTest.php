@@ -139,25 +139,6 @@ class ShippingTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testShouldReturnNullGettingCostsIfHasNotQuotation()
-    {
-        // Set
-        $shipping = m::mock(Shipping::class . '[firstQuotation]');
-        $shipping->shouldAllowMockingProtectedMethods();
-
-        // Expectations
-        $shipping->shouldReceive('firstQuotation')
-            ->withNoArgs()
-            ->once()
-            ->andReturn(new Quotation());
-
-        // Actions
-        $result = $shipping->getCosts();
-
-        // Assertions
-        $this->assertNull($result);
-    }
-
     public function testShouldReturnTheGetDeadlineProperly()
     {
         // Set
@@ -184,26 +165,6 @@ class ShippingTest extends TestCase
 
         // Assertions
         $this->assertSame($expected, $result);
-    }
-
-    public function testShouldReturnNullGettingDeadlineIfHasNotQuotation()
-    {
-        // Set
-        $shipping = m::mock(Shipping::class . '[firstQuotation]');
-
-        $shipping->shouldAllowMockingProtectedMethods();
-
-        // Expectations
-        $shipping->shouldReceive('firstQuotation')
-            ->withNoArgs()
-            ->once()
-            ->andReturn(new Quotation());
-
-        // Actions
-        $result = $shipping->getDeadline();
-
-        // Assertions
-        $this->assertNull($result);
     }
 
     public function testShouldGetFirstQuotation()
@@ -287,8 +248,12 @@ class ShippingTest extends TestCase
             ->andReturn(true);
 
         // Actions
-        $shipping->quotations();
-        $shipping->quotations();
+        $result1 = $shipping->quotations();
+        $result2 = $shipping->quotations();
+
+        // Assertions
+        $this->assertSame([], $result1);
+        $this->assertSame([], $result2);
     }
 
     public function testShouldReturnANewInstanceOfRequest()
@@ -362,30 +327,7 @@ class ShippingTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testShouldFlagAQuotationAsContracted()
-    {
-        // Set
-        Shipping::$token = '123';
-        $shipping = m::mock(Shipping::class . '[newRequest]');
-        $shipping->shouldAllowMockingProtectedMethods();
-
-        $request = m::mock(Request::class . '[flagAsContracted]', ['1010']);
-
-        // Expectations
-        $shipping->shouldReceive('newRequest')
-            ->with('123')
-            ->once()
-            ->andReturn($request);
-
-        $request->shouldReceive('flagAsContracted')
-            ->with($shipping, null)
-            ->once();
-
-        // Actions
-        $shipping->flagAsContracted();
-    }
-
-    public function testShouldReturngetElectedQuotation()
+    public function testShouldReturnGetElectedQuotation()
     {
         // Set
         $shipping = m::mock(Shipping::class . '[quotations]');

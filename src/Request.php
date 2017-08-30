@@ -105,23 +105,4 @@ class Request
 
         return $response;
     }
-
-    /**
-     * Flagging the quotation elected to Axado API.
-     *
-     * @param Shipping    $shipping
-     * @param string|null $quotationToken
-     */
-    public function flagAsContracted(Shipping $shipping, string $quotationToken = null)
-    {
-        $jsonString = json_encode(['status' => 2]);
-        $quotationCode = $shipping->getElectedQuotation()->getQuotationCode();
-        $token = $this->token;
-
-        $this->doRequest(
-            'PUT',
-            static::$quotationURL . $quotationToken . '/' . $quotationCode . '/status/?token=' . $token,
-            $jsonString
-        );
-    }
 }

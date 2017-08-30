@@ -89,15 +89,11 @@ class Shipping
     /**
      * Get the first quotation and return the price.
      *
-     * @return int|null
+     * @return string|null
      */
     public function getCosts()
     {
-        if ($quotation = $this->firstQuotation()) {
-            return $quotation->getCosts();
-        }
-
-        return null;
+        return $this->firstQuotation()->getCosts();
     }
 
     /**
@@ -111,7 +107,7 @@ class Shipping
     {
         $quotations = (array) $this->quotations();
 
-        if (!isset($quotations[0])) {
+        if (! isset($quotations[0])) {
             throw new QuotationNotFoundException(
                 sprintf(
                     'No quotations were found to the given CEP: %s',
@@ -203,26 +199,11 @@ class Shipping
     /**
      * Get the first quotation and return the price.
      *
-     * @return int
+     * @return string|null
      */
     public function getDeadline()
     {
-        if ($quotation = $this->firstQuotation()) {
-            return $quotation->getDeadline();
-        }
-
-        return null;
-    }
-
-    /**
-     * Marking this shipping quotation as contracted to Axado API.
-     */
-    public function flagAsContracted()
-    {
-        $request = $this->newRequest(static::$token);
-        $token = $this->quotationToken;
-
-        $request->flagAsContracted($this, $token);
+        return $this->firstQuotation()->getDeadline();
     }
 
     /**

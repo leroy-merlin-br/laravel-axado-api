@@ -41,41 +41,6 @@ class RequestTest extends TestCase
         $this->assertSame($response, $result);
     }
 
-    public function testShouldDoRequestProperlyWhenFlagAsContracted()
-    {
-        // Set
-        $token = 'api-token';
-        $quotationToken = 'cotacao-token';
-
-        $request = m::mock(Request::class . '[doRequest]', [$token]);
-        $request->shouldAllowMockingProtectedMethods();
-
-        $shipping = m::mock(Shipping::class . '[getElectedQuotation]');
-        $quotation = m::mock(Quotation::class . '[getQuotationCode]');
-
-        // Expectations
-        $shipping->shouldReceive('getElectedQuotation')
-            ->withNoArgs()
-            ->once()
-            ->andReturn($quotation);
-
-        $quotation->shouldReceive('getQuotationCode')
-            ->withNoArgs()
-            ->once()
-            ->andReturn('100');
-
-        $request->shouldReceive('doRequest')
-            ->with(
-                'PUT',
-                'http://api.axado.com.br/v2/cotacao/cotacao-token/100/status/?token=api-token',
-                json_encode(['status' => 2])
-            )
-            ->once();
-
-        // Actions
-        $request->flagAsContracted($shipping, $quotationToken);
-    }
-
     public function testShouldReturnResponseObject()
     {
         // Set

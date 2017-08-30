@@ -66,8 +66,3 @@ class Product implements Axado\Volume\VolumeInterface {
     $shipping->getCosts();      // in reais
     $shipping->getDeadline();   // in days
     ```
-
-- Marking the last quotation as contracted
-```php
-$shipping->flagAsContracted();
-```
