@@ -5,8 +5,7 @@ php:
   - 7.1
 
 before_script:
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install
+  - composer install
 
 script:
   - mkdir -p build/logs

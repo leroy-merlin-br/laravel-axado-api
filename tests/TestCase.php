@@ -8,7 +8,7 @@ class TestCase extends BaseTestCase
     /**
      * {@inheritdoc}
      */
-    public function tearDown()
+    protected function tearDown()
     {
         m::close();
         parent::tearDown();
