@@ -1,7 +1,6 @@
 <?php
-namespace Axado;
+namespace Axado\Formatter;
 
-use Axado\Formatter\JsonFormatter;
 use Mockery as m;
 use TestCase;
 
