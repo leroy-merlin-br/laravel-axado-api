@@ -1,14 +1,16 @@
 <?php
 
-class TestCase extends PHPUnit_Framework_TestCase
-{
-    public function setUp()
-    {
-        parent::setUp();
-    }
+use Mockery as m;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 
+class TestCase extends BaseTestCase
+{
+    /**
+     * {@inheritdoc}
+     */
     public function tearDown()
     {
+        m::close();
         parent::tearDown();
     }
 
@@ -19,7 +21,7 @@ class TestCase extends PHPUnit_Framework_TestCase
      * @param array $args
      * @return mixed
      */
-    protected function callProtected($obj, $method, $args = array())
+    protected function callProtected($obj, $method, $args = [])
     {
         $methodObj = new ReflectionMethod(get_class($obj), $method);
         $methodObj->setAccessible(true);

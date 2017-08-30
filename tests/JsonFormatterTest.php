@@ -1,18 +1,12 @@
 <?php
 namespace Axado;
 
-use TestCase;
+use Axado\Formatter\JsonFormatter;
 use Mockery as m;
-use \Axado\Formatter\JsonFormatter;
+use TestCase;
 
 class JsonFormatterTest extends TestCase
 {
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
     public function testShouldFormatPropertlyTheShippingInstanceGiven()
     {
         // Set

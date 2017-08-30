@@ -1,19 +1,11 @@
 <?php
 namespace Axado;
 
-use TestCase;
-use Axado\Shipping;
 use Mockery as m;
+use TestCase;
 
 class ShippingTest extends TestCase
 {
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
     public function testShouldRenderPropertlyInJson()
     {
         // Set

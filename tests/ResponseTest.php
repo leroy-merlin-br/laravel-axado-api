@@ -1,18 +1,11 @@
 <?php
 namespace Axado;
 
-use TestCase;
 use Mockery as m;
+use TestCase;
 
 class ResponseTest extends TestCase
 {
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
     public function testShouldReturnFalseWhenCallForEmptyResponseIfIsOk()
     {
         // Set

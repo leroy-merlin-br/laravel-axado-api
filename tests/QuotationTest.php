@@ -2,17 +2,9 @@
 namespace Axado;
 
 use TestCase;
-use Mockery as m;
 
 class QuotationTest extends TestCase
 {
-
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
     public function testShouldFillCorrectly()
     {
         // Set

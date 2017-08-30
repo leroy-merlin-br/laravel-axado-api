@@ -1,18 +1,11 @@
 <?php
 namespace Axado;
 
-use TestCase;
 use Mockery as m;
+use TestCase;
 
 class RequestTest extends TestCase
 {
-
-    public function tearDown()
-    {
-        m::close();
-        parent::tearDown();
-    }
-
     public function testShouldDoRequestPropertly()
     {
         // Range
