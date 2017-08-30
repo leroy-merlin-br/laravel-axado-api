@@ -9,111 +9,123 @@ class ResponseTest extends TestCase
     public function testShouldReturnFalseWhenCallForEmptyResponseIfIsOk()
     {
         // Set
-        $response = new Response;
+        $response = new Response();
 
-        // Assert
-        $this->assertFalse($response->isOk());
+        // Actions
+        $result = $response->isOk();
+
+        // Assertions
+        $this->assertFalse($result);
     }
 
     public function testShouldParseTheResponseRaw()
     {
         // Set
-        $response = m::mock('Axado\Response[parseQuotations,isError]');
+        $response = m::mock(Response::class . '[parseQuotations,isError]');
         $response->shouldAllowMockingProtectedMethods();
+        $body = ['raw' => '12.0'];
 
-        // Expect
+        // Expectations
         $response->shouldReceive('isError')
+            ->with($body)
             ->once()
             ->andReturn(false);
 
         $response->shouldReceive('parseQuotations')
-            ->once()
-            ->with(['raw' => '12.0']);
+            ->with($body)
+            ->once();
 
-        // Assert
-        $response->parse(['raw' => '12.0']);
-        $this->assertTrue($response->isOk());
+        // Actions
+        $response->parse($body);
+        $result = $response->isOk();
+
+        // Assertions
+        $this->assertTrue($result);
     }
 
     public function testShouldParseNotIfHasError()
     {
         // Set
-        $response = m::mock('Axado\Response[parseQuotations,isError]');
+        $response = m::mock(Response::class . '[parseQuotations,isError]');
         $response->shouldAllowMockingProtectedMethods();
+        $body = ['raw' => 'body'];
 
-        // Expect
+        // Expectations
         $response->shouldReceive('isError')
+            ->with($body)
             ->once()
             ->andReturn(true);
 
         $response->shouldReceive('parseQuotations')
             ->never();
 
-        // Assert
-        $response->parse("{ raw }");
-        $this->assertFalse($response->isOk());
+        // Actions
+        $response->parse($body);
+        $result = $response->isOk();
+
+        // Assertions
+        $this->assertFalse($result);
     }
 
     public function testShouldIfNotErrorReturnFalse()
     {
         // Set
-        $response = new Response;
-        $data = ["right object" => true];
+        $response = new Response();
+        $data = ['right object' => true];
 
-        // Expect
+        // Actions
         $result = $this->callProtected($response, 'isError', [$data]);
 
-        // Assert
+        // Assertions
         $this->assertFalse($result);
     }
 
     public function testShouldReturnTrueIfHasError()
     {
         // Set
-        $response = new Response;
-        $data = ["erro_id" => '123', "erro_msg" => 'cep não encontrado'];
+        $response = new Response();
+        $data = ['erro_id' => '123', 'erro_msg' => 'cep não encontrado'];
 
-        // Expect
-        $result =  $this->callProtected($response, 'isError', [$data]);
+        // Actions
+        $result = $this->callProtected($response, 'isError', [$data]);
 
-        // Assert
+        // Assertions
         $this->assertTrue($result);
     }
 
     public function testShouldReturnTrueIfHasEmptyArrayError()
     {
         // Set
-        $response = new Response;
+        $response = new Response();
         $data = [];
 
-        // Expect
-        $result =  $this->callProtected($response, 'isError', [$data]);
+        // Expectations
+        $result = $this->callProtected($response, 'isError', [$data]);
 
-        // Assert
+        // Assertions
         $this->assertTrue($result);
     }
 
     public function testShouldParseQuotations()
     {
         // Set
-        $response = new Response;
+        $response = new Response();
         $data = [
-            "cotacoes" => [
+            'cotacoes' => [
                 [
-                    "transportadora_metaname" => "correios",
-                    "servico_metaname"        => "correios-pac"
-                ]
+                    'transportadora_metaname' => 'correios',
+                    'servico_metaname' => 'correios-pac',
+                ],
             ],
-            "consulta_token" => "token consulta"
+            'consulta_token' => 'token consulta',
         ];
 
-        // Act
+        // Actions
         $this->callProtected($response, 'parseQuotations', [$data]);
         $result = $response->quotations();
 
-        // Assert
+        // Assertions
         $this->assertTrue(is_array($result));
-
-        $this->assertEquals("token consulta", $response->getQuotationToken());
+        $this->assertSame('token consulta', $response->getQuotationToken());
     }
 }

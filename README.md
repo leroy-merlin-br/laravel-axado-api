@@ -46,8 +46,8 @@ class Product implements Axado\Volume\VolumeInterface {
     $shipping->setPostalCodeOrigin('04661100');
     $shipping->setPostalCodeDestination('13301430');
     $shipping->setTotalPrice('40');
-    $shipping->setAditionalDays('10');
-    $shipping->setAditionalPrice('12.6');
+    $shipping->setAdditionalDays('10');
+    $shipping->setAdditionalPrice('12.6');
     ```
 
 - Adding Volume

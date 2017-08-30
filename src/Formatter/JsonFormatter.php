@@ -1,20 +1,21 @@
 <?php
 namespace Axado\Formatter;
 
+use Axado\Shipping;
+
 class JsonFormatter implements FormatterInterface
 {
-
     /**
      * Axado\Shipping instance.
      *
-     * @var Axado\Shipping
+     * @var Shipping
      */
     protected $instance;
 
     /**
      * {@inheritdoc}
      */
-    public function setInstance(\Axado\Shipping $instance)
+    public function setInstance(Shipping $instance)
     {
         $this->instance = $instance;
     }
@@ -22,13 +23,13 @@ class JsonFormatter implements FormatterInterface
     /**
      * {@inheritdoc}
      */
-    public function format()
+    public function format(): string
     {
         $attributes = $this->instance->getAttributes();
-        $volumes    = $this->instance->allVolumes();
+        $volumes = $this->instance->allVolumes();
 
         foreach ($volumes as $index => $volume) {
-            $attributes["volumes"][$index] = $volume->volumeToArray();
+            $attributes['volumes'][$index] = $volume->volumeToArray();
         }
 
         return json_encode($attributes);

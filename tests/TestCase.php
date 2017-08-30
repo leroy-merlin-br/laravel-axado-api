@@ -16,14 +16,16 @@ class TestCase extends BaseTestCase
 
     /**
      * Actually runs a protected method of the given object.
-     * @param       $obj
-     * @param       $method
-     * @param array $args
+     *
+     * @param object $object
+     * @param string $method
+     * @param mixed  $args
+     *
      * @return mixed
      */
-    protected function callProtected($obj, $method, $args = [])
+    protected function callProtected($object, string $method, $args = [])
     {
-        $methodObj = new ReflectionMethod(get_class($obj), $method);
+        $methodObj = new ReflectionMethod(get_class($object), $method);
         $methodObj->setAccessible(true);
 
         if (is_object($args)) {
@@ -32,6 +34,6 @@ class TestCase extends BaseTestCase
             $args = (array) $args;
         }
 
-        return $methodObj->invokeArgs($obj, $args);
+        return $methodObj->invokeArgs($object, $args);
     }
 }

@@ -1,36 +1,17 @@
 <?php
 namespace Axado;
 
-use Axado\Exception\ShippingException;
 use Axado\Exception\QuotationNotFoundException;
+use Axado\Exception\ShippingException;
+use Axado\Formatter\FormatterInterface;
 use Axado\Formatter\JsonFormatter;
 use Axado\Volume\VolumeInterface;
-use Axado\Formatter\FormatterInterface;
 
 class Shipping
 {
     /**
-     * All attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
-     * Quotation used.
-     *
-     * @var Axado\Quotation
-     */
-    protected $quotationElected;
-
-    /**
-     * Quotation string.
-     * @var string
-     */
-    protected $quotation_token;
-
-    /**
      * Requires fields in Shipping.
+     *
      * @var array
      */
     public static $requiredFields = [
@@ -47,6 +28,27 @@ class Shipping
     public static $token;
 
     /**
+     * All attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
+     * Quotation used.
+     *
+     * @var Quotation
+     */
+    protected $electedQuotation;
+
+    /**
+     * Quotation string.
+     *
+     * @var string
+     */
+    protected $quotationToken;
+
+    /**
      * All volumes objects.
      *
      * @var array
@@ -54,23 +56,23 @@ class Shipping
     protected $volumes = [];
 
     /**
-     * Axado\Formatter instance.
+     * FormatterInterface instance.
      *
-     * @var Axado\Formatter
+     * @var FormatterInterface
      */
     protected $formatter;
 
     /**
      * Axado\Request instance.
      *
-     * @var Axado\Request
+     * @var Request
      */
     protected $request;
 
     /**
      * Axado\Response instance.
      *
-     * @var Axado\Response
+     * @var Response
      */
     protected $response;
 
@@ -81,46 +83,17 @@ class Shipping
      */
     public function __construct(FormatterInterface $formatter = null)
     {
-        if ($formatter) {
-            $this->formatter = $formatter;
-        } else {
-            $this->formatter = new JsonFormatter;
-        }
-    }
-
-    /**
-     * Consult this shipping through api.
-     *
-     * @return array
-     */
-    public function quotations()
-    {
-        if (! $this->isValid()) {
-            throw new ShippingException(
-                "This shipping was not filled correctly", 
-                1
-            );
-        }
-
-        if (! $this->response) {
-            $request               = $this->newRequest(static::$token);
-            $this->response        = $request->consultShipping($this->toJson());
-            $this->quotation_token = $this->response->getQuotationToken();
-        }
-
-        return $this->response->quotations();
+        $this->formatter = $formatter ?: new JsonFormatter();
     }
 
     /**
      * Get the first quotation and return the price.
      *
-     * @return integer
+     * @return int|null
      */
     public function getCosts()
     {
-        $quotation = $this->firstQuotation();
-
-        if ($quotation) {
+        if ($quotation = $this->firstQuotation()) {
             return $quotation->getCosts();
         }
 
@@ -128,15 +101,113 @@ class Shipping
     }
 
     /**
+     * Returns the first quotation.
+     *
+     * @throws QuotationNotFoundException
+     *
+     * @return Quotation
+     */
+    public function firstQuotation(): Quotation
+    {
+        $quotations = (array) $this->quotations();
+
+        if (!isset($quotations[0])) {
+            throw new QuotationNotFoundException(
+                sprintf(
+                    'No quotations were found to the given CEP: %s',
+                    $this->getPostalCodeDestination()
+                )
+            );
+        }
+
+        $this->electedQuotation = $quotations[0];
+
+        return $quotations[0];
+    }
+
+    /**
+     * Consult this shipping through api.
+     *
+     * @throws ShippingException
+     *
+     * @return array
+     */
+    public function quotations()
+    {
+        if (! $this->isValid()) {
+            throw new ShippingException(
+                'This shipping was not filled correctly',
+                1
+            );
+        }
+
+        if (! $this->response) {
+            $request = $this->newRequest(static::$token);
+            $this->response = $request->consultShipping($this->toJson());
+            $this->quotationToken = $this->response->getQuotationToken();
+        }
+
+        return $this->response->quotations();
+    }
+
+    /**
+     * Verify is this instance is Valid.
+     *
+     * @return bool
+     */
+    protected function isValid(): bool
+    {
+        foreach (static::$requiredFields as $field) {
+            if (! isset($this->attributes[$field]) || ! $this->attributes[$field]) {
+                return false;
+            }
+        }
+
+        return (bool) $this->volumes;
+    }
+
+    /**
+     * Returns a new instance of Request.
+     *
+     * @param string $token
+     *
+     * @return Request
+     */
+    protected function newRequest(string $token): Request
+    {
+        return new Request($token);
+    }
+
+    /**
+     * Return this object in json format.
+     *
+     * @return string
+     */
+    protected function toJson(): string
+    {
+        $this->formatter->setInstance($this);
+
+        return $this->formatter->format();
+    }
+
+    /**
+     * Getter of postal code destination
+     *
+     * @return string|null
+     */
+    protected function getPostalCodeDestination()
+    {
+        return $this->attributes['cep_destino'] ?? null;
+    }
+
+    /**
      * Get the first quotation and return the price.
      *
-     * @return integer
+     * @return int
      */
     public function getDeadline()
     {
-        $quotation = $this->firstQuotation();
-
-        if ($quotation) {
+        if ($quotation = $this->firstQuotation()) {
             return $quotation->getDeadline();
         }
 
@@ -145,13 +216,11 @@ class Shipping
 
     /**
      * Marking this shipping quotation as contracted to Axado API.
-     *
-     * @return null
      */
     public function flagAsContracted()
     {
         $request = $this->newRequest(static::$token);
-        $token   = $this->quotation_token;
+        $token = $this->quotationToken;
 
         $request->flagAsContracted($this, $token);
     }
@@ -159,11 +228,11 @@ class Shipping
     /**
      * Getter for quotation elected.
      *
-     * @return Axado\Quotation
+     * @return Quotation
      */
-    public function getQuotationElected()
+    public function getElectedQuotation()
     {
-        return $this->quotationElected;
+        return $this->electedQuotation;
     }
 
     /**
@@ -171,7 +240,7 @@ class Shipping
      *
      * @return array
      */
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -179,21 +248,21 @@ class Shipping
     /**
      * Setter to Postal Code origin.
      *
-     * @param strin $cep
+     * @param string $cep
      */
     public function setPostalCodeOrigin($cep)
     {
-        $this->attributes["cep_origem"] = (string)$cep;
+        $this->attributes['cep_origem'] = (string) $cep;
     }
 
     /**
      * Setter to Postal Code destination.
      *
-     * @param strin $cep
+     * @param string $cep
      */
     public function setPostalCodeDestination($cep)
     {
-        $this->attributes["cep_destino"] = (string)$cep;
+        $this->attributes['cep_destino'] = (string) $cep;
     }
 
     /**
@@ -203,39 +272,9 @@ class Shipping
      */
     public function setTotalPrice($price)
     {
-        $this->attributes["valor_notafiscal"] = (float)$price;
+        $this->attributes['valor_notafiscal'] = (float) $price;
 
-        $this->setAditionalPrice($this->getAditionalPrice());
-    }
-
-    /**
-     * Getter to Total price of sale.
-     *
-     * @param float $price
-     */
-    public function getTotalPrice()
-    {
-        return @$this->attributes["valor_notafiscal"];
-    }
-
-    /**
-     * Getter to of aditional price.
-     *
-     * @param float $price
-     */
-    public function getAditionalPrice()
-    {
-        return @$this->attributes["preco_adicional"];
-    }
-
-    /**
-     * Setter to additional days.
-     *
-     * @param int $days
-     */
-    public function setAditionalDays($days)
-    {
-        $this->attributes["prazo_adicional"] = (int)$days;
+        $this->setAdditionalPrice($this->getAdditionalPrice());
     }
 
     /**
@@ -243,28 +282,27 @@ class Shipping
      *
      * @param float $price
      */
-    public function setAditionalPrice($price)
+    public function setAdditionalPrice($price)
     {
-        $aditionalPrice = $this->calculateAditionalPrice($price);
+        $additionalPrice = $this->calculateAdditionalPrice($price);
 
-        $this->attributes["preco_adicional"] = $aditionalPrice;
+        $this->attributes['preco_adicional'] = $additionalPrice;
     }
 
     /**
-     * Calculate the aditional price.
+     * Calculate the additional price.
+     *
      * @param  string $price
+     *
      * @return float
      */
-    public function calculateAditionalPrice($price)
+    public function calculateAdditionalPrice($price)
     {
-        $tempPrice  = $price;
+        $tempPrice = $price;
         $totalPrice = $this->getTotalPrice();
 
-        if (preg_match('/%/', $price) && (float)$price && $totalPrice) {
-
-            $price = (float)$price;
-
-            if ($price) {
+        if (preg_match('/%/', $price) && (float) $price && $totalPrice) {
+            if ($price = (float) $price) {
                 $price = $totalPrice * $price / 100;
             } else {
                 $price = $tempPrice;
@@ -273,9 +311,37 @@ class Shipping
             $price = $tempPrice;
         }
 
-
-
         return $price;
+    }
+
+    /**
+     * Getter to Total price of sale.
+     *
+     * @return float|null
+     */
+    public function getTotalPrice()
+    {
+        return $this->attributes['valor_notafiscal'] ?? null;
+    }
+
+    /**
+     * Getter to of Additional price.
+     *
+     * @return float|null
+     */
+    public function getAdditionalPrice()
+    {
+        return $this->attributes['preco_adicional'] ?? null;
+    }
+
+    /**
+     * Setter to additional days.
+     *
+     * @param int $days
+     */
+    public function setAdditionalDays($days)
+    {
+        $this->attributes['prazo_adicional'] = (int) $days;
     }
 
     /**
@@ -293,94 +359,16 @@ class Shipping
      *
      * @return array
      */
-    public function allVolumes()
+    public function allVolumes(): array
     {
         return $this->volumes;
     }
 
     /**
      * Clean all volumes.
-     *
-     * @return null
      */
     public function clearVolumes()
     {
         $this->volumes = [];
-    }
-
-    /**
-     * Returns a new instance of Request.
-     *
-     * @param  string $token
-     * @return Request
-     */
-    protected function newRequest($token)
-    {
-        return new Request($token);
-    }
-
-    /**
-     * Returns the first quotation.
-     *
-     * @return Quotation
-     */
-    public function firstQuotation()
-    {
-        $quotations = (array)$this->quotations();
-
-        if (false === isset($quotations[0])) {
-            throw new QuotationNotFoundException(
-                sprintf(
-                    'No quotations were found to the given CEP: %s',
-                    $this->getPostalCodeDestination()
-                )
-            );
-        }
-
-        $this->quotationElected = $quotations[0];
-            
-        return $quotations[0];  
-    }
-
-    /**
-     * Getter of postal code destination
-     *
-     * @return string
-     */
-    protected function getPostalCodeDestination()
-    {
-        return @$this->attributes["cep_destino"];
-    }
-
-    /**
-     * Return this object in json format.
-     *
-     * @return string
-     */
-    protected function toJson()
-    {
-        $this->formatter->setInstance($this);
-
-        return $this->formatter->format();
-    }
-
-    /**
-     * Verify is this instance is Valid.
-     *
-     * @return boolean
-     */
-    protected function isValid()
-    {
-        foreach (static::$requiredFields as $field) {
-            if (! isset($this->attributes[$field]) || ! $this->attributes[$field] ) {
-                return false;
-            }
-        }
-
-        if (! $this->volumes) {
-            return false;
-        }
-
-        return true;
     }
 }

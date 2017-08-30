@@ -1,20 +1,21 @@
 <?php
 namespace Axado\Formatter;
 
-interface FormatterInterface {
+use Axado\Shipping;
 
+interface FormatterInterface
+{
     /**
      * Setter for Shipping instance inside Formatter.
      *
-     * @param \Axado\Shipping $instance
-     * @return null
+     * @param Shipping $instance
      */
-    public function setInstance(\Axado\Shipping $instance);
+    public function setInstance(Shipping $instance);
 
     /**
-     * Format the instance given.
+     * Format given instance.
      *
      * @return string
      */
-    public function format();
+    public function format(): string;
 }

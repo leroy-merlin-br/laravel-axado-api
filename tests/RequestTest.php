@@ -6,22 +6,24 @@ use TestCase;
 
 class RequestTest extends TestCase
 {
-    public function testShouldDoRequestPropertly()
+    public function testShouldDoRequestProperly()
     {
-        // Range
-        $token        = "dsao231-sda0-123";
-        $responseMock = m::mock('Axado\Response');
-        $request      = m::mock('Axado\Request[doRequest,createResponse]', [$token]);
-        $data         = "{ json: string }";
-        $raw          = "{ rawResponse: true }";
-
+        // Set
+        $token = 'dsao231-sda0-123';
+        $response = m::mock(Response::class);
+        $request = m::mock(
+            Request::class . '[doRequest,createResponse]',
+            [$token]
+        );
         $request->shouldAllowMockingProtectedMethods();
+        $data = '{ json: string }';
+        $raw = ['rawResponse' => true];
 
-        // Expect
+        // Expectations
         $request->shouldReceive('doRequest')
             ->with(
-                "POST",
-                "http://api.axado.com.br/v2/consulta/?token=$token",
+                'POST',
+                "http://api.axado.com.br/v2/consulta/?token={$token}",
                 $data
             )
             ->once()
@@ -29,45 +31,48 @@ class RequestTest extends TestCase
 
         $request->shouldReceive('createResponse')
             ->with($raw)
-            ->andReturn($responseMock);
+            ->once()
+            ->andReturn($response);
 
-        // Act
-        $response = $request->consultShipping($data);
+        // Actions
+        $result = $request->consultShipping($data);
 
-        // Assert
-        $this->assertEquals($responseMock, $response);
+        // Assertions
+        $this->assertSame($response, $result);
     }
 
-    public function testShouldDoRequestPropertlyWhenFlagAsContracted()
+    public function testShouldDoRequestProperlyWhenFlagAsContracted()
     {
-        // Range
-        $token          = "api-token";
-        $quotationToken = "cotacao-token";
+        // Set
+        $token = 'api-token';
+        $quotationToken = 'cotacao-token';
 
-        $request        = m::mock('Axado\Request[doRequest]', [$token]);
-        $shipping       = m::mock('Axado\Shipping[getQuotationElected]');
-        $quotation      = m::mock('Axado\Quotation[getQuotationCode]');
-
+        $request = m::mock(Request::class . '[doRequest]', [$token]);
         $request->shouldAllowMockingProtectedMethods();
 
-        // Expect
-        $shipping->shouldReceive('getQuotationElected')
+        $shipping = m::mock(Shipping::class . '[getElectedQuotation]');
+        $quotation = m::mock(Quotation::class . '[getQuotationCode]');
+
+        // Expectations
+        $shipping->shouldReceive('getElectedQuotation')
+            ->withNoArgs()
             ->once()
             ->andReturn($quotation);
 
         $quotation->shouldReceive('getQuotationCode')
+            ->withNoArgs()
             ->once()
             ->andReturn('100');
 
         $request->shouldReceive('doRequest')
             ->with(
-                "PUT",
-                "http://api.axado.com.br/v2/cotacao/cotacao-token/100/status/?token=api-token",
-                json_encode(["status" => 2])
+                'PUT',
+                'http://api.axado.com.br/v2/cotacao/cotacao-token/100/status/?token=api-token',
+                json_encode(['status' => 2])
             )
             ->once();
 
-        // Act
+        // Actions
         $request->flagAsContracted($shipping, $quotationToken);
     }
 
@@ -76,10 +81,10 @@ class RequestTest extends TestCase
         // Set
         $shipping = m::mock(new Request('2020'));
 
-        // Act
+        // Actions
         $result = $shipping->createResponse('raw');
 
-        // Assert
-        $this->assertTrue($result instanceof \Axado\Response);
+        // Assertions
+        $this->assertInstanceOf(Response::class, $result);
     }
 }

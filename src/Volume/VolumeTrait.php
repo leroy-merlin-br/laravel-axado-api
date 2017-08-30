@@ -1,24 +1,23 @@
 <?php
 namespace Axado\Volume;
 
-trait VolumeTrait {
-
+trait VolumeTrait
+{
     /**
-     * Returns the instance parsed to Json.
-     * @return string
+     * Returns the instance as array.
+     *
+     * @return array
      */
-    public function volumeToArray()
+    public function volumeToArray(): array
     {
-        $attributes = [];
-
-        $attributes['sku']         = $this->getSku();
-        $attributes['quantidade']  = $this->getQuantity();
-        $attributes['preco']       = $this->getPriceUnit();
-        $attributes['altura']      = $this->getHeight();
-        $attributes['comprimento'] = $this->getLength();
-        $attributes['largura']     = $this->getWidth();
-        $attributes['peso']        = $this->getWeight();
-
-        return $attributes;
+        return [
+            'sku' => $this->getSku(),
+            'quantidade' => $this->getQuantity(),
+            'preco' => $this->getPriceUnit(),
+            'altura' => $this->getHeight(),
+            'comprimento' => $this->getLength(),
+            'largura' => $this->getWidth(),
+            'peso' => $this->getWeight(),
+        ];
     }
 }

@@ -8,111 +8,125 @@ class QuotationTest extends TestCase
     public function testShouldFillCorrectly()
     {
         // Set
-        $quotation = new Quotation;
+        $quotation = new Quotation();
+        $quotation->fill(
+            [
+                'transportadora_metaname' => 'Correiros',
+                'servico_metaname' => 'Correios-pac',
+                'servico_nome' => 'pac',
+                'cotacao_preco' => '10.5',
+                'cotacao_custo' => '10.3',
+                'cotacao_prazo' => '4',
+                'non field' => 'non value',
+            ]
+        );
 
-        $data = [
-            "transportadora_metaname" => "Correiros",
-            "servico_metaname"        => "Correios-pac",
-            "servico_nome"            => "pac",
-            "cotacao_preco"           => "10.5",
-            "cotacao_custo"           => "10.3",
-            "cotacao_prazo"           => "4",
-            "non field"               => 'non value'
+        $expected = [
+            'name' => 'Correiros',
+            'service_metaname' => 'Correios-pac',
+            'service_name' => 'pac',
+            'quotation_price' => '10.5',
+            'quotation_costs' => '10.3',
+            'deadline' => '4',
         ];
 
-        // Act
-        $quotation->fill($data);
+        // Actions
         $result = $quotation->attributes();
 
-        // Assert
-        $expected = [
-            'name'             => 'Correiros',
-            'service_metaname' => 'Correios-pac',
-            'service_name'     => 'pac',
-            'quotation_price'  => '10.5',
-            'quotation_costs'  => '10.3',
-            'deadline'         => '4',
-        ];
-
-        $this->assertEquals($expected, $result);
+        // Assertions
+        $this->assertSame($expected, $result);
     }
 
     public function testShouldReturnNullWithNoTheQuotationToken()
     {
         // Set
-        $quotation = new Quotation;
+        $quotation = new Quotation();
 
-        // Assert
-        $this->assertNull($quotation->getQuotationCode());
+        // Actions
+        $result = $quotation->getQuotationCode();
+
+        // Assertions
+        $this->assertNull($result);
     }
 
     public function testShouldReturnTheQuotationToken()
     {
         // Set
-        $quotation = new Quotation;
+        $quotation = new Quotation();
+        $quotation->fill(
+            [
+                'cotacao_codigo' => '123',
+            ]
+        );
 
-        $data = [
-            "cotacao_codigo" => "123"
-        ];
+        // Actions
+        $result = $quotation->getQuotationCode();
 
-        // Act
-        $quotation->fill($data);
+        // Assertions
+        $this->assertSame('123', $result);
+    }
 
-        // Assert
-        $this->assertEquals("123", $quotation->getQuotationCode());
+    public function testShouldReturnNullCost()
+    {
+        // Set
+        $quotation = new Quotation();
+
+        // Actions
+        $result = $quotation->getCosts();
+
+        // Assertions
+        $this->assertNull($result);
     }
 
     public function testShouldReturnTheCosts()
     {
         // Set
-        $quotation = new Quotation;
+        $quotation = new Quotation();
+        $quotation->fill(
+            [
+                'cotacao_preco' => '123,1',
+            ]
+        );
 
-        $this->assertNull($quotation->getCosts());
+        // Actions
+        $result = $quotation->getCosts();
 
-        $data = [
-            "cotacao_preco" => "123,1"
-        ];
-
-        // Act
-        $quotation->fill($data);
-
-        // Act
-        $this->assertEquals("123,1", $quotation->getCosts());
+        // Assertions
+        $this->assertSame('123,1', $result);
     }
 
     public function testShouldReturnTheDeadline()
     {
         // Set
-        $quotation = new Quotation;
+        $quotation = new Quotation();
 
         $this->assertNull($quotation->getDeadline());
 
         $data = [
-            "cotacao_prazo" => "12"
+            'cotacao_prazo' => '12',
         ];
 
-        // Act
+        // Actions
         $quotation->fill($data);
 
-        // Assert
-        $this->assertEquals("12", $quotation->getDeadline());
+        // Assertions
+        $this->assertSame('12', $quotation->getDeadline());
     }
 
     public function testShouldGetAttributes()
     {
         // Set
-        $quotation = new Quotation;
-
-        $data = [
-            "transportadora_metaname" => "FooBar"
-        ];
-        // Act
-        $quotation->fill($data);
-
-        // Assert
-        $this->assertEquals(
-            'FooBar',
-            $quotation->name
+        $quotation = new Quotation();
+        $quotation->fill(
+            [
+                'transportadora_metaname' => 'FooBar',
+            ]
         );
+
+        // Actions
+        $result = $quotation->name;
+
+        // Assertions
+        $this->assertSame('FooBar', $result);
     }
 }

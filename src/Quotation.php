@@ -1,21 +1,21 @@
 <?php
 namespace Axado;
 
-class Quotation {
-
+class Quotation
+{
     /**
      * Fields with be parsed after the response is returned.
      *
      * @var array
      */
-    protected $possibleAttr = [
-        "transportadora_metaname" => "name",
-        "servico_metaname"        => "service_metaname",
-        "servico_nome"            => "service_name",
-        "cotacao_preco"           => "quotation_price",
-        "cotacao_custo"           => "quotation_costs",
-        "cotacao_prazo"           => "deadline",
-        "cotacao_codigo"          => "quotation_id"
+    protected $possibleAttributes = [
+        'transportadora_metaname' => 'name',
+        'servico_metaname' => 'service_metaname',
+        'servico_nome' => 'service_name',
+        'cotacao_preco' => 'quotation_price',
+        'cotacao_custo' => 'quotation_costs',
+        'cotacao_prazo' => 'deadline',
+        'cotacao_codigo' => 'quotation_id',
     ];
 
     /**
@@ -28,14 +28,13 @@ class Quotation {
     /**
      * Fill this object with raw attributes given by Response.
      *
-     * @param  array $rawAttributes
-     * @return null
+     * @param array $rawAttributes
      */
-    public function fill($rawAttributes)
+    public function fill(array $rawAttributes = [])
     {
         foreach ($rawAttributes as $key => $value) {
-            if (array_key_exists($key, $this->possibleAttr)) {
-                $keyParsed = $this->possibleAttr[$key];
+            if (array_key_exists($key, $this->possibleAttributes)) {
+                $keyParsed = $this->possibleAttributes[$key];
 
                 $this->attributes[$keyParsed] = $value;
             }
@@ -47,58 +46,50 @@ class Quotation {
      *
      * @return array
      */
-    public function attributes()
+    public function attributes(): array
     {
         return $this->attributes;
     }
 
     /**
      * Returns the quotation code.
-     * @return null|string
+     *
+     * @return string|null
      */
     public function getQuotationCode()
     {
-        if (isset($this->attributes['quotation_id'])) {
-            return $this->attributes['quotation_id'];
-        }
-
-        return null;
+        return $this->attributes['quotation_id'] ?? null;
     }
 
     /**
      * Returns the cost.
-     * @return null|string
+     *
+     * @return string|null
      */
     public function getCosts()
     {
-        if (isset($this->attributes['quotation_price'])) {
-            return $this->attributes['quotation_price'];
-        }
-
-        return null;
+        return $this->attributes['quotation_price'] ?? null;
     }
 
-     /**
+    /**
      * Returns the deadline in days
-     * @return null|string
+     *
+     * @return string|null
      */
     public function getDeadline()
     {
-        if (isset($this->attributes['deadline'])) {
-            return $this->attributes['deadline'];
-        }
-
-        return null;
+        return $this->attributes['deadline'] ?? null;
     }
 
     /**
      * Magic attribute getter
      *
-     * @param  string $attrName Attribute name
+     * @param string $attributeName
+     *
      * @return mixed
      */
-    public function __get($attrName)
+    public function __get(string $attributeName)
     {
-        return isset($this->attributes[$attrName]) ? $this->attributes[$attrName] : null;
+        return $this->attributes[$attributeName] ?? null;
     }
 }

@@ -8,14 +8,14 @@ class Request
      *
      * @var string
      */
-    protected static $urlConsult = "http://api.axado.com.br/v2/consulta/?token=";
+    protected static $consultURL = 'http://api.axado.com.br/v2/consulta/?token=';
 
     /**
      * The de API url.
      *
      * @var string
      */
-    protected static $urlQuotation = "http://api.axado.com.br/v2/cotacao/";
+    protected static $quotationURL = 'http://api.axado.com.br/v2/cotacao/';
 
     /**
      * Token for consult quotations.
@@ -29,7 +29,7 @@ class Request
      *
      * @param string $token
      */
-    public function __construct($token)
+    public function __construct(string $token)
     {
         $this->token = $token;
     }
@@ -37,14 +37,15 @@ class Request
     /**
      * Runs the request to Axado API and return a Response Object.
      *
-     * @param  string $jsonString
-     * @return \Axado\Response
+     * @param string $jsonString
+     *
+     * @return Response
      */
-    public function consultShipping($jsonString)
+    public function consultShipping($jsonString): Response
     {
         $raw = $this->doRequest(
-            "POST",
-            static::$urlConsult . $this->token,
+            'POST',
+            static::$consultURL . $this->token,
             $jsonString
         );
 
@@ -52,14 +53,54 @@ class Request
     }
 
     /**
+     * Request to Axado API.
+     *
+     * @codeCoverageIgnore
+     *
+     * @param string $method
+     * @param string $path
+     * @param string $data
+     *
+     * @return array
+     */
+    protected function doRequest(string $method, string $path, string $data): array
+    {
+        $conn = curl_init();
+
+        curl_setopt_array(
+            $conn,
+            [
+                CURLOPT_URL => $path,
+                CURLOPT_TIMEOUT => 15,
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_CUSTOMREQUEST => $method,
+                CURLOPT_FORBID_REUSE => 1,
+                CURLOPT_POSTFIELDS => $data,
+            ]
+        );
+
+        $response = curl_exec($conn);
+        $data = null;
+
+        if (false !== $response) {
+            $data = json_decode($response, true);
+        }
+
+        curl_close($conn);
+
+        return $data ?? [];
+    }
+
+    /**
      * Return the Response instance.
      *
      * @param  string $raw
-     * @return \Axado\Response
+     *
+     * @return Response
      */
-    protected function createResponse($raw)
+    protected function createResponse($raw): Response
     {
-        $response = new Response;
+        $response = new Response();
         $response->parse($raw);
 
         return $response;
@@ -68,53 +109,19 @@ class Request
     /**
      * Flagging the quotation elected to Axado API.
      *
-     * @param  AxadoShipping $shipping
-     * @param  string $token
-     * @return null
+     * @param Shipping    $shipping
+     * @param string|null $quotationToken
      */
-    public function flagAsContracted(\Axado\Shipping $shipping, $quotationToken)
+    public function flagAsContracted(Shipping $shipping, string $quotationToken = null)
     {
-        $jsonString    = json_encode(["status" => 2]);
-        $quotationCode = $shipping->getQuotationElected()->getQuotationCode();
-        $token         = $this->token;
+        $jsonString = json_encode(['status' => 2]);
+        $quotationCode = $shipping->getElectedQuotation()->getQuotationCode();
+        $token = $this->token;
 
-        $raw = $this->doRequest(
-            "PUT",
-            static::$urlQuotation . $quotationToken ."/". $quotationCode . '/status/' . "?token=" . $token,
+        $this->doRequest(
+            'PUT',
+            static::$quotationURL . $quotationToken . '/' . $quotationCode . '/status/?token=' . $token,
             $jsonString
         );
-    }
-
-    /**
-     * Request to Axado API.
-     *
-     * @codeCoverageIgnore
-     * @param string $method
-     * @param string $path
-     * @param string $data
-     *
-     * @return array
-     */
-    protected function doRequest($method, $path, $data)
-    {
-        $conn = curl_init();
-
-        curl_setopt($conn, CURLOPT_URL, $path);
-        curl_setopt($conn, CURLOPT_TIMEOUT, 15);
-        curl_setopt($conn, CURLOPT_RETURNTRANSFER, 1) ;
-        curl_setopt($conn, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($conn, CURLOPT_FORBID_REUSE, 1);
-        curl_setopt($conn, CURLOPT_POSTFIELDS, $data);
-
-        $response = curl_exec($conn);
-        $data     = null;
-
-        if ($response !== false) {
-            $data = json_decode($response, true);
-        }
-
-        curl_close($conn);
-
-        return $data;
     }
 }

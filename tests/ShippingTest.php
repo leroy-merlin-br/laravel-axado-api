@@ -1,280 +1,292 @@
 <?php
 namespace Axado;
 
+use Axado\Exception\QuotationNotFoundException;
+use Axado\Exception\ShippingException;
+use Axado\Formatter\JsonFormatter;
+use Axado\Volume\VolumeInterface;
 use Mockery as m;
 use TestCase;
 
 class ShippingTest extends TestCase
 {
-    public function testShouldRenderPropertlyInJson()
+    public function testShouldRenderProperlyInJson()
     {
         // Set
-        $volume    = m::mock('Axado\Volume\VolumeInterface');
-        $formatter = m::mock('Axado\Formatter\JsonFormatter');
-        $shipping  = new Shipping($formatter);
-        $expect    = "{json: 'withproducts'}";
+        $volume = m::mock(VolumeInterface::class);
+        $formatter = m::mock(JsonFormatter::class);
+        $shipping = new Shipping($formatter);
+        $expect = "{json: 'withproducts'}";
 
         $shipping->addVolume($volume);
 
-        // Expect
+        // Expectations
         $formatter->shouldReceive('setInstance')
-            ->once()
-            ->with($shipping);
+            ->with($shipping)
+            ->once();
 
         $formatter->shouldReceive('format')
+            ->withNoArgs()
             ->once()
             ->andReturn($expect);
 
-        // Assert
+        // Actions
         $result = $this->callProtected($shipping, 'toJson');
-        $this->assertEquals($expect, $result);
+
+        // Assertions
+        $this->assertSame($expect, $result);
     }
 
     public function testShouldAddAVolume()
     {
         // Set
-        $volume    = m::mock('Axado\Volume\VolumeInterface');
-        $shipping  = new Shipping;
+        $volume = m::mock(VolumeInterface::class);
+        $shipping = new Shipping();
 
-        // act
+        // Actions
         $shipping->addVolume($volume);
+        $result = $shipping->allVolumes();
 
-        // Assert
-        $expect = $shipping->allVolumes();
-        $this->assertEquals([$volume], $expect);
+        // Assertions
+        $this->assertSame([$volume], $result);
     }
 
     public function testShouldCleanAllVolumes()
     {
         // Set
-        $volume    = m::mock('Axado\Volume\VolumeInterface');
-        $shipping  = new Shipping;
+        $volume = m::mock(VolumeInterface::class);
+        $shipping = new Shipping();
 
-        // Act
+        // Actions
         $shipping->addVolume($volume);
         $shipping->clearVolumes();
+        $result = $shipping->allVolumes();
 
-        // Assert
-        $this->assertEquals([], $shipping->allVolumes());
+        // Assertions
+        $this->assertSame([], $result);
     }
 
     public function testShouldPrepareRightAttributes()
     {
         // Set
-        $shipping = new Shipping;
+        $shipping = new Shipping();
 
         $shipping->setPostalCodeOrigin('123123');
         $shipping->setPostalCodeDestination('01010');
         $shipping->setTotalPrice('21.2');
-        $shipping->setAditionalDays('12');
-        $shipping->setAditionalPrice('12.6');
+        $shipping->setAdditionalDays('12');
+        $shipping->setAdditionalPrice('12.6');
 
         $expected = [
-            "cep_origem"       => '123123',
-            "cep_destino"      => '01010',
-            "valor_notafiscal" => 21.2,
-            "prazo_adicional"  => 12,
-            "preco_adicional"  => 12.6
+            'cep_origem' => '123123',
+            'cep_destino' => '01010',
+            'valor_notafiscal' => 21.2,
+            'preco_adicional' => '12.6',
+            'prazo_adicional' => 12,
         ];
 
-        // Act
+        // Actions
         $result = $shipping->getAttributes();
 
-        // Assert
-        $this->assertEquals($result, $expected);
+        // Assertions
+        $this->assertSame($result, $expected);
     }
 
-    /**
-     * @expectedException Axado\Exception\ShippingException
-     * @expectedExceptionMessage This shipping was not filled correctly
-     */
     public function testShouldThrowAxadoExceptionWhenTheShippingIsNotValid()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[isValid]');
-
+        $shipping = m::mock(Shipping::class . '[isValid]');
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
-
+        // Expectations
         $shipping->shouldReceive('isValid')
+            ->withNoArgs()
             ->once()
             ->andReturn(false);
 
-        // Act
+        $this->expectException(ShippingException::class);
+        $this->expectExceptionMessage('This shipping was not filled correctly');
+
+        // Actions
         $shipping->quotations();
     }
 
-    public function testShouldReturnTheGetCostsPropertly()
+    public function testShouldReturnTheGetCostsProperly()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[firstQuotation]');
-        $quotation = m::mock('Axado\Quotation');
-        $expected  = 10.5;
-        $quotation->quotation_price = $expected;
-
+        $shipping = m::mock(Shipping::class . '[firstQuotation]');
         $shipping->shouldAllowMockingProtectedMethods();
 
+        $quotation = m::mock(Quotation::class);
+        $expected = 10.5;
+        $quotation->quotation_price = $expected;
+
+        // Expectations
         $quotation->shouldReceive('getCosts')
+            ->withNoArgs()
             ->once()
             ->andReturn($expected);
 
-        // Expect
         $shipping->shouldReceive('firstQuotation')
+            ->withNoArgs()
             ->once()
             ->andReturn($quotation);
 
-        // Act
+        // Actions
         $result = $shipping->getCosts();
 
-        // Assert
-        $this->assertEquals($expected, $result);
+        // Assertions
+        $this->assertSame($expected, $result);
     }
 
     public function testShouldReturnNullGettingCostsIfHasNotQuotation()
     {
         // Set
-        $shipping = m::mock('Axado\Shipping[firstQuotation]');
+        $shipping = m::mock(Shipping::class . '[firstQuotation]');
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
+        // Expectations
         $shipping->shouldReceive('firstQuotation')
+            ->withNoArgs()
             ->once()
-            ->andReturn([]);
+            ->andReturn(new Quotation());
 
-        // Act
+        // Actions
         $result = $shipping->getCosts();
 
-        // Assert
+        // Assertions
         $this->assertNull($result);
     }
 
-    public function testShouldReturnTheGetDeadlinePropertly()
+    public function testShouldReturnTheGetDeadlineProperly()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[firstQuotation]');
-        $quotation = m::mock('Axado\Quotation');
-        $expected  = 4;
+        $shipping = m::mock(Shipping::class . '[firstQuotation]');
+        $quotation = m::mock(Quotation::class);
+        $expected = 4;
         $quotation->deadline = $expected;
 
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
+        // Expectations
         $shipping->shouldReceive('firstQuotation')
+            ->withNoArgs()
             ->once()
             ->andReturn($quotation);
 
         $quotation->shouldReceive('getDeadline')
+            ->withNoArgs()
             ->once()
             ->andReturn($expected);
 
-        // Act
+        // Actions
         $result = $shipping->getDeadline();
 
-        // Assert
-        $this->assertEquals($expected, $result);
+        // Assertions
+        $this->assertSame($expected, $result);
     }
 
     public function testShouldReturnNullGettingDeadlineIfHasNotQuotation()
     {
         // Set
-        $shipping = m::mock('Axado\Shipping[firstQuotation]');
+        $shipping = m::mock(Shipping::class . '[firstQuotation]');
 
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
+        // Expectations
         $shipping->shouldReceive('firstQuotation')
+            ->withNoArgs()
             ->once()
-            ->andReturn([]);
+            ->andReturn(new Quotation());
 
-        // Act
+        // Actions
         $result = $shipping->getDeadline();
 
-        // Assert
+        // Assertions
         $this->assertNull($result);
     }
-
 
     public function testShouldGetFirstQuotation()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[quotations]');
-        $quotation = m::mock('Axado\Quotation');
+        $shipping = m::mock(Shipping::class . '[quotations]');
+        $quotation = m::mock(Quotation::class);
 
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
+        // Expectations
         $shipping->shouldReceive('quotations')
+            ->withNoArgs()
             ->once()
             ->andReturn([$quotation]);
 
-        // Act
+        // Actions
         $result = $shipping->firstQuotation();
 
-        // Assert
-        $this->assertEquals($quotation, $result);
+        // Assertions
+        $this->assertSame($quotation, $result);
     }
 
-    /**
-     * @expectedException \Axado\Exception\QuotationNotFoundException
-     * @expectedExceptionMessage No quotations were found to the given CEP: 01234-000
-     */
     public function testShouldReturnNullIfHasNoQuotation()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[quotations]');
-        $quotation = m::mock('Axado\Quotation');
-
+        $shipping = m::mock(Shipping::class . '[quotations]');
         $shipping->shouldAllowMockingProtectedMethods();
 
         $shipping->setPostalCodeDestination('01234-000');
 
-        // Expect
+        // Expectations
         $shipping->shouldReceive('quotations')
+            ->withNoArgs()
             ->once()
             ->andReturn([]);
 
-        // Act
+        $this->expectException(QuotationNotFoundException::class);
+        $this->expectExceptionMessage('No quotations were found to the given CEP: 01234-000');
+
+        // Actions
         $this->callProtected($shipping, 'firstQuotation');
     }
 
     public function testShouldReturnQuotations()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[newRequest,isValid]');
-        $token     = '123466';
-        $request   = m::mock('Axado\Request[consultShipping,quotations]', [$token]);
-        $quotation = m::mock('Axado\Quotation');
-        $response  = m::mock('Axado\Response');
+        $shipping = m::mock(Shipping::class . '[newRequest,isValid]');
+        $token = '123466';
+        $request = m::mock(Request::class . '[consultShipping,quotations]', [$token]);
+        $response = m::mock(Response::class);
 
         $shipping::$token = $token;
 
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
+        // Expectations
         $request->shouldReceive('consultShipping')
             ->with('[]')
             ->once()
             ->andReturn($response);
 
         $response->shouldReceive('quotations')
+            ->withNoArgs()
             ->twice()
             ->andReturn([]);
 
         $response->shouldReceive('getQuotationToken')
+            ->withNoArgs()
             ->once()
-            ->andReturn("1231203das01");
+            ->andReturn('1231203das01');
 
         $shipping->shouldReceive('newRequest')
-            ->once()
             ->with($token)
+            ->once()
             ->andReturn($request);
 
         $shipping->shouldReceive('isValid')
+            ->withNoArgs()
             ->twice()
             ->andReturn(true);
 
-        // Act
+        // Actions
         $shipping->quotations();
         $shipping->quotations();
     }
@@ -282,150 +294,153 @@ class ShippingTest extends TestCase
     public function testShouldReturnANewInstanceOfRequest()
     {
         // Set
-        $shipping = new Shipping;
+        $shipping = new Shipping();
 
-        // Act
+        // Actions
         $result = $this->callProtected($shipping, 'newRequest', '12345');
 
-        // Assert
-        $this->assertTrue($result instanceof \Axado\Request);
+        // Assertions
+        $this->assertTrue($result instanceof Request);
     }
 
     public function testShouldVerifyIfThisInstanceIsValid()
     {
         // Set
-        $shipping = new Shipping;
-        $volume   = m::mock('Axado\Volume\VolumeInterface');
+        $shipping = new Shipping();
+        $volume = m::mock(VolumeInterface::class);
 
         $shipping->setPostalCodeOrigin('123123');
         $shipping->setPostalCodeDestination('01010');
         $shipping->setTotalPrice('21.2');
-        $shipping->setAditionalDays('12');
-        $shipping->setAditionalPrice('12.6');
+        $shipping->setAdditionalDays('12');
+        $shipping->setAdditionalPrice('12.6');
 
         $shipping->addVolume($volume);
 
-        // Act
+        // Actions
         $result = $this->callProtected($shipping, 'isValid');
 
-        // Assert
+        // Assertions
         $this->assertTrue($result);
     }
 
     public function testShouldInvalidWhenVolumeIsEmpty()
     {
         // Set
-        $shipping = new Shipping;
+        $shipping = new Shipping();
 
         $shipping->setPostalCodeOrigin('123123');
         $shipping->setPostalCodeDestination('01010');
         $shipping->setTotalPrice('21.2');
-        $shipping->setAditionalDays('12');
-        $shipping->setAditionalPrice('12.6');
+        $shipping->setAdditionalDays('12');
+        $shipping->setAdditionalPrice('12.6');
 
-        // Act
+        // Actions
         $result = $this->callProtected($shipping, 'isValid');
 
-        // Assert
+        // Assertions
         $this->assertFalse($result);
     }
 
     public function testShouldInvalidWhenIsEmpty()
     {
         // Set
-        $shipping = new Shipping;
-        $volume   = m::mock('Axado\Volume\VolumeInterface');
+        $shipping = new Shipping();
+        $volume = m::mock(VolumeInterface::class);
 
         $shipping->setPostalCodeOrigin('123123');
         $shipping->setPostalCodeDestination('01010');
-        $shipping->setAditionalDays('12');
-        $shipping->setAditionalPrice('12.6');
+        $shipping->setAdditionalDays('12');
+        $shipping->setAdditionalPrice('12.6');
 
         $shipping->addVolume($volume);
 
-        // Act
+        // Actions
         $result = $this->callProtected($shipping, 'isValid');
 
-        // Assert
+        // Assertions
         $this->assertFalse($result);
     }
 
     public function testShouldFlagAQuotationAsContracted()
     {
         // Set
-        $shipping = m::mock('Axado\Shipping[newRequest]');
-        $request  = m::mock('Axado\Request[flagAsContracted]', ['1010']);
-
+        Shipping::$token = '123';
+        $shipping = m::mock(Shipping::class . '[newRequest]');
         $shipping->shouldAllowMockingProtectedMethods();
 
-        // Expect
+        $request = m::mock(Request::class . '[flagAsContracted]', ['1010']);
+
+        // Expectations
         $shipping->shouldReceive('newRequest')
+            ->with('123')
             ->once()
             ->andReturn($request);
 
         $request->shouldReceive('flagAsContracted')
-            ->with($shipping, '')
+            ->with($shipping, null)
             ->once();
 
-        // Act
+        // Actions
         $shipping->flagAsContracted();
     }
 
-    public function testShouldReturnGetQuotationElected()
+    public function testShouldReturngetElectedQuotation()
     {
         // Set
-        $shipping  = m::mock('Axado\Shipping[quotations]');
-        $quotation = m::mock('Axado\Quotation');
+        $shipping = m::mock(Shipping::class . '[quotations]');
+        $quotation = m::mock(Quotation::class);
 
-        // Expect
+        // Expectations
         $shipping->shouldReceive('quotations')
+            ->withNoArgs()
             ->once()
             ->andReturn([$quotation]);
 
-        // Act
+        // Actions
         $this->callProtected($shipping, 'firstQuotation');
 
-        // Assert
-        $this->assertEquals($quotation, $shipping->getQuotationElected());
+        // Assertions
+        $this->assertSame($quotation, $shipping->getElectedQuotation());
     }
 
-    public function testShouldSetAditionalPriceValueAsPercentage()
+    public function testShouldSetAdditionalPriceValueAsPercentage()
     {
         // Set
-        $shipping = new Shipping;
+        $shipping = new Shipping();
 
         $shipping->setTotalPrice('100.10');
-        $shipping->setAditionalPrice('12%');
+        $shipping->setAdditionalPrice('12%');
 
         $expected = [
-            "valor_notafiscal" => 100.1,
-            "preco_adicional"  => 12.012
+            'valor_notafiscal' => 100.1,
+            'preco_adicional' => 12.012,
         ];
 
-        // Act
+        // Actions
         $result = $shipping->getAttributes();
 
-        // Assert
+        // Assertions
         $this->assertEquals($result, $expected);
     }
 
-    public function testShouldRecalculateAditionalPricePercentageWhenSetTotalPrice()
+    public function testShouldRecalculateAdditionalPricePercentageWhenSetTotalPrice()
     {
         // Set
-        $shipping = new Shipping;
+        $shipping = new Shipping();
 
-        $shipping->setAditionalPrice('12%');
-        $shipping->setTotalPrice('85.10');
+        $shipping->setAdditionalPrice('12%');
+        $shipping->setTotalPrice(85.10);
 
         $expected = [
-            "valor_notafiscal" => 85.10,
-            "preco_adicional"  => 10.212
+            'preco_adicional' => 10.212,
+            'valor_notafiscal' => 85.10,
         ];
 
-        // Act
+        // Actions
         $result = $shipping->getAttributes();
 
-        // Assert
-        $this->assertEquals($result, $expected);
+        // Assertions
+        $this->assertSame($result, $expected);
     }
 }

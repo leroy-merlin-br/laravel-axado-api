@@ -6,21 +6,21 @@ class Response
     /**
      * If the request is ok.
      *
-     * @var boolean
+     * @var bool
      */
     protected $isOk;
 
     /**
-     * Error_id sended by Axado.
+     * Error_id sent by Axado.
      *
-     * @var boolean
+     * @var bool
      */
     protected $errorId;
 
     /**
-     * The error message sended by Axado.
+     * The error message sent by Axado.
      *
-     * @var boolean
+     * @var bool
      */
     protected $errorMessage;
 
@@ -32,18 +32,18 @@ class Response
     protected $quotations = [];
 
     /**
-     * The token sended by Axado.
+     * The token sent by Axado.
      *
      * @var string
      */
-    protected $quotation_token;
+    protected $quotationToken;
 
     /**
      * Getter for quotations.
      *
      * @return array
      */
-    public function quotations()
+    public function quotations(): array
     {
         return $this->quotations;
     }
@@ -51,85 +51,71 @@ class Response
     /**
      * Returns if the response was Ok.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isOk()
+    public function isOk(): bool
     {
-        return (boolean)$this->isOk;
+        return (bool) $this->isOk;
     }
 
     /**
      * Parse the raw response to this object.
      *
-     * @param  array $raw
-     * @return null
+     * @param array|null $raw
      */
     public function parse($raw = null)
     {
-        $arrayResponse = (array)$raw;
+        $arrayResponse = (array) $raw;
+        $this->isOk = ! $this->isError($arrayResponse);
 
-        if (! $this->isError($arrayResponse)) {
+        if ($this->isOk) {
             $this->parseQuotations($arrayResponse);
-            $this->isOk = true;
-        } else {
-            $this->isOk = false;
         }
+    }
+
+    /**
+     * Verify if this Response has an error.
+     *
+     * @param array $arrayResponse
+     *
+     * @return bool
+     */
+    protected function isError($arrayResponse): bool
+    {
+        if (isset($arrayResponse['erro_id'])) {
+            $this->errorId = $arrayResponse['erro_id'];
+            $this->errorMessage = $arrayResponse['erro_msg'];
+
+            return true;
+        }
+
+        return ! $arrayResponse;
     }
 
     /**
      * Parse the response into Quotation objects.
      *
-     * @param  array $arrayResponse
-     * @return null
+     * @param array $arrayResponse
      */
     protected function parseQuotations(array $arrayResponse)
     {
-        $quotationsArray = [];
-
-        if (isset($arrayResponse['cotacoes'])) {
-            $quotationsArray = $arrayResponse['cotacoes'];
-        }
-
-        if (isset($arrayResponse["consulta_token"])) {
-            $this->quotation_token = $arrayResponse["consulta_token"];
-        }
+        $quotationsArray = $arrayResponse['cotacoes'] ?? [];
+        $this->quotationToken = $arrayResponse['consulta_token'] ?? null;
 
         foreach ($quotationsArray as $quotationArray) {
-            $quotation = new Quotation;
+            $quotation = new Quotation();
             $quotation->fill($quotationArray);
             $this->quotations[] = $quotation;
         }
     }
 
     /**
-     * Verify if this Response has a error.
-     *
-     * @param  array  $arrayResponse
-     * @return boolean
-     */
-    protected function isError($arrayResponse)
-    {
-        if (isset($arrayResponse['erro_id'])) {
-            $this->errorId      = $arrayResponse['erro_id'];
-            $this->errorMessage = $arrayResponse['erro_msg'];
-
-            return true;
-        }
-
-        if (! $arrayResponse) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Returns the quotation token.
      *
-     * @return string
+     * @return string|null
      */
     public function getQuotationToken()
     {
-        return $this->quotation_token;
+        return $this->quotationToken;
     }
 }
