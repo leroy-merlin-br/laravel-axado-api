@@ -1,7 +1,7 @@
 <?php
 namespace Axado\Volume;
 
-use TestCase;
+use Axado\TestCase;
 
 class VolumeTraitTest extends TestCase
 {

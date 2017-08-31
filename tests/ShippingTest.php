@@ -6,7 +6,6 @@ use Axado\Exception\ShippingException;
 use Axado\Formatter\JsonFormatter;
 use Axado\Volume\VolumeInterface;
 use Mockery as m;
-use TestCase;
 
 class ShippingTest extends TestCase
 {
@@ -188,7 +187,7 @@ class ShippingTest extends TestCase
         $this->assertSame($quotation, $result);
     }
 
-    public function testShouldReturnNullIfHasNoQuotation()
+    public function testShouldThrowExceptionIfItHasNoQuotation()
     {
         // Set
         $shipping = m::mock(Shipping::class . '[quotations]');

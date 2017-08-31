@@ -2,7 +2,7 @@
 namespace Axado;
 
 use Mockery as m;
-use TestCase;
+
 
 class RequestTest extends TestCase
 {

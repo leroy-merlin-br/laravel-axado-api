@@ -2,9 +2,9 @@
 namespace Axado\Formatter;
 
 use Axado\Shipping;
+use Axado\TestCase;
 use Axado\Volume\VolumeInterface;
 use Mockery as m;
-use TestCase;
 
 class JsonFormatterTest extends TestCase
 {

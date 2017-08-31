@@ -1,8 +1,6 @@
 <?php
 namespace Axado;
 
-use TestCase;
-
 class QuotationTest extends TestCase
 {
     public function testShouldFillCorrectly()

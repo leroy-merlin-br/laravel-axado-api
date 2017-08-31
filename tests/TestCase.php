@@ -1,7 +1,9 @@
 <?php
+namespace Axado;
 
 use Mockery as m;
 use PHPUnit\Framework\TestCase as BaseTestCase;
+use ReflectionMethod;
 
 class TestCase extends BaseTestCase
 {
