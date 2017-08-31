@@ -1,111 +1,12 @@
 <?php
 namespace Axado;
 
-use Mockery as m;
+use Axado\Exception\DestinationNotFoundException;
+use Axado\Exception\ShippingException;
 
 class ResponseTest extends TestCase
 {
-    public function testShouldReturnFalseWhenCallForEmptyResponseIfIsOk()
-    {
-        // Set
-        $response = new Response();
-
-        // Actions
-        $result = $response->isOk();
-
-        // Assertions
-        $this->assertFalse($result);
-    }
-
-    public function testShouldParseTheResponseRaw()
-    {
-        // Set
-        $response = m::mock(Response::class . '[parseQuotations,isError]');
-        $response->shouldAllowMockingProtectedMethods();
-        $body = ['raw' => '12.0'];
-
-        // Expectations
-        $response->shouldReceive('isError')
-            ->with($body)
-            ->once()
-            ->andReturn(false);
-
-        $response->shouldReceive('parseQuotations')
-            ->with($body)
-            ->once();
-
-        // Actions
-        $response->parse($body);
-        $result = $response->isOk();
-
-        // Assertions
-        $this->assertTrue($result);
-    }
-
-    public function testShouldParseNotIfHasError()
-    {
-        // Set
-        $response = m::mock(Response::class . '[parseQuotations,isError]');
-        $response->shouldAllowMockingProtectedMethods();
-        $body = ['raw' => 'body'];
-
-        // Expectations
-        $response->shouldReceive('isError')
-            ->with($body)
-            ->once()
-            ->andReturn(true);
-
-        $response->shouldReceive('parseQuotations')
-            ->never();
-
-        // Actions
-        $response->parse($body);
-        $result = $response->isOk();
-
-        // Assertions
-        $this->assertFalse($result);
-    }
-
-    public function testShouldIfNotErrorReturnFalse()
-    {
-        // Set
-        $response = new Response();
-        $data = ['right object' => true];
-
-        // Actions
-        $result = $this->callProtected($response, 'isError', [$data]);
-
-        // Assertions
-        $this->assertFalse($result);
-    }
-
-    public function testShouldReturnTrueIfHasError()
-    {
-        // Set
-        $response = new Response();
-        $data = ['erro_id' => '123', 'erro_msg' => 'cep não encontrado'];
-
-        // Actions
-        $result = $this->callProtected($response, 'isError', [$data]);
-
-        // Assertions
-        $this->assertTrue($result);
-    }
-
-    public function testShouldReturnTrueIfHasEmptyArrayError()
-    {
-        // Set
-        $response = new Response();
-        $data = [];
-
-        // Expectations
-        $result = $this->callProtected($response, 'isError', [$data]);
-
-        // Assertions
-        $this->assertTrue($result);
-    }
-
-    public function testShouldParseQuotations()
+    public function testShouldParseRawResponse()
     {
         // Set
         $response = new Response();
@@ -116,14 +17,44 @@ class ResponseTest extends TestCase
                     'servico_metaname' => 'correios-pac',
                 ],
             ],
-            'consulta_token' => 'token consulta',
         ];
 
         // Actions
-        $this->callProtected($response, 'parseQuotations', [$data]);
+        $response->parse($data);
         $result = $response->quotations();
 
         // Assertions
-        $this->assertTrue(is_array($result));
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(Quotation::class, $result[0]);
+    }
+
+    public function testShouldNotParseIfItHasError()
+    {
+        // Set
+        $response = new Response();
+        $errorMsg = 'Destino invalido: 99999999';
+        $body = ['erro_msg' => $errorMsg, 'erro_id' => 102];
+
+        // Expectations
+        $this->expectException(DestinationNotFoundException::class);
+        $this->expectExceptionMessage($errorMsg);
+
+        // Actions
+        $response->parse($body);
+    }
+
+    public function testShouldNotParseIfItHasUnknownError()
+    {
+        // Set
+        $response = new Response();
+        $errorMsg = 'Deu ruim';
+        $body = ['erro_msg' => $errorMsg, 'erro_id' => 999];
+
+        // Expectations
+        $this->expectException(ShippingException::class);
+        $this->expectExceptionMessage($errorMsg);
+
+        // Actions
+        $response->parse($body);
     }
 }

@@ -4,18 +4,11 @@ namespace Axado;
 class Request
 {
     /**
-     * The de API url.
+     * The API url.
      *
      * @var string
      */
     protected static $consultURL = 'http://api.axado.com.br/v2/consulta/?token=';
-
-    /**
-     * The de API url.
-     *
-     * @var string
-     */
-    protected static $quotationURL = 'http://api.axado.com.br/v2/cotacao/';
 
     /**
      * Token for consult quotations.
@@ -49,7 +42,10 @@ class Request
             $jsonString
         );
 
-        return $this->createResponse($raw);
+        $response = new Response();
+        $response->parse($raw);
+
+        return $response;
     }
 
     /**
@@ -89,20 +85,5 @@ class Request
         curl_close($conn);
 
         return $data ?? [];
-    }
-
-    /**
-     * Return the Response instance.
-     *
-     * @param  string $raw
-     *
-     * @return Response
-     */
-    protected function createResponse($raw): Response
-    {
-        $response = new Response();
-        $response->parse($raw);
-
-        return $response;
     }
 }

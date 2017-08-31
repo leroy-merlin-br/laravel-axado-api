@@ -1,8 +1,10 @@
 <?php
 namespace Axado;
 
+use Axado\Exception\DestinationNotFoundException;
 use Axado\Exception\QuotationNotFoundException;
 use Axado\Exception\ShippingException;
+use Axado\Formatter\FormatterInterface;
 use Axado\Formatter\JsonFormatter;
 use Axado\Volume\VolumeInterface;
 use Mockery as m;
@@ -208,6 +210,52 @@ class ShippingTest extends TestCase
         $this->callProtected($shipping, 'firstQuotation');
     }
 
+    public function testShouldThrowExceptionIfDestinationIsInvalid()
+    {
+        // Set
+        $formatter = m::mock(FormatterInterface::class);
+        $shipping = m::mock(Shipping::class . '[isValid,newRequest]', [$formatter]);
+        $shipping->shouldAllowMockingProtectedMethods();
+        $shipping->setPostalCodeDestination('01234-000');
+        $token = 't0k3n';
+        $shipping::$token = $token;
+
+        $request = m::mock(Request::class);
+        $payload = '{request: "123"}';
+
+        // Expectations
+        $shipping->shouldReceive('isValid')
+            ->withNoArgs()
+            ->once()
+            ->andReturn(true);
+
+        $shipping->shouldReceive('newRequest')
+            ->with($token)
+            ->once()
+            ->andReturn($request);
+
+        $formatter->shouldReceive('setInstance')
+            ->with($shipping)
+            ->once();
+
+        $formatter->shouldReceive('format')
+            ->withNoArgs()
+            ->once()
+            ->andReturn($payload);
+
+
+        $request->shouldReceive('consultShipping')
+            ->with($payload)
+            ->once()
+            ->andThrow(new DestinationNotFoundException('Given CEP is not a valid destination: 01234-000', 101));
+
+        $this->expectException(DestinationNotFoundException::class);
+        $this->expectExceptionMessage('Given CEP is not a valid destination: 01234-000');
+
+        // Actions
+        $shipping->firstQuotation();
+    }
+
     public function testShouldReturnQuotations()
     {
         // Set
@@ -319,25 +367,6 @@ class ShippingTest extends TestCase
 
         // Assertions
         $this->assertFalse($result);
-    }
-
-    public function testShouldReturnGetElectedQuotation()
-    {
-        // Set
-        $shipping = m::mock(Shipping::class . '[quotations]');
-        $quotation = m::mock(Quotation::class);
-
-        // Expectations
-        $shipping->shouldReceive('quotations')
-            ->withNoArgs()
-            ->once()
-            ->andReturn([$quotation]);
-
-        // Actions
-        $this->callProtected($shipping, 'firstQuotation');
-
-        // Assertions
-        $this->assertSame($quotation, $shipping->getElectedQuotation());
     }
 
     public function testShouldSetAdditionalPriceValueAsPercentage()

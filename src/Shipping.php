@@ -35,13 +35,6 @@ class Shipping
     protected $attributes = [];
 
     /**
-     * Quotation used.
-     *
-     * @var Quotation
-     */
-    protected $electedQuotation;
-
-    /**
      * All volumes objects.
      *
      * @var array
@@ -80,41 +73,6 @@ class Shipping
     }
 
     /**
-     * Get the first quotation and return the price.
-     *
-     * @return string|null
-     */
-    public function getCosts()
-    {
-        return $this->firstQuotation()->getCosts();
-    }
-
-    /**
-     * Returns the first quotation.
-     *
-     * @throws QuotationNotFoundException
-     *
-     * @return Quotation
-     */
-    public function firstQuotation(): Quotation
-    {
-        $quotations = (array) $this->quotations();
-
-        if (! isset($quotations[0])) {
-            throw new QuotationNotFoundException(
-                sprintf(
-                    'No quotations were found to the given CEP: %s',
-                    $this->getPostalCodeDestination()
-                )
-            );
-        }
-
-        $this->electedQuotation = $quotations[0];
-
-        return $quotations[0];
-    }
-
-    /**
      * Consult this shipping through api.
      *
      * @throws ShippingException
@@ -124,10 +82,7 @@ class Shipping
     public function quotations()
     {
         if (! $this->isValid()) {
-            throw new ShippingException(
-                'This shipping was not filled correctly',
-                1
-            );
+            throw new ShippingException('This shipping was not filled correctly');
         }
 
         if (! $this->response) {
@@ -139,53 +94,34 @@ class Shipping
     }
 
     /**
-     * Verify is this instance is Valid.
+     * Returns the first quotation.
      *
-     * @return bool
+     * @throws QuotationNotFoundException
+     *
+     * @return Quotation
      */
-    protected function isValid(): bool
+    public function firstQuotation(): Quotation
     {
-        foreach (static::$requiredFields as $field) {
-            if (! isset($this->attributes[$field]) || ! $this->attributes[$field]) {
-                return false;
-            }
+        if (! $quotation = $this->quotations()[0] ?? null) {
+            throw new QuotationNotFoundException(
+                sprintf(
+                    'No quotations were found to the given CEP: %s',
+                    $this->getPostalCodeDestination()
+                )
+            );
         }
 
-        return (bool) $this->volumes;
+        return $quotation;
     }
 
     /**
-     * Returns a new instance of Request.
-     *
-     * @param string $token
-     *
-     * @return Request
-     */
-    protected function newRequest(string $token): Request
-    {
-        return new Request($token);
-    }
-
-    /**
-     * Return this object in json format.
-     *
-     * @return string
-     */
-    protected function toJson(): string
-    {
-        $this->formatter->setInstance($this);
-
-        return $this->formatter->format();
-    }
-
-    /**
-     * Getter of postal code destination
+     * Get the first quotation and return the price.
      *
      * @return string|null
      */
-    protected function getPostalCodeDestination()
+    public function getCosts()
     {
-        return $this->attributes['cep_destino'] ?? null;
+        return $this->firstQuotation()->getCosts();
     }
 
     /**
@@ -196,16 +132,6 @@ class Shipping
     public function getDeadline()
     {
         return $this->firstQuotation()->getDeadline();
-    }
-
-    /**
-     * Getter for quotation elected.
-     *
-     * @return Quotation
-     */
-    public function getElectedQuotation()
-    {
-        return $this->electedQuotation;
     }
 
     /**
@@ -343,5 +269,55 @@ class Shipping
     public function clearVolumes()
     {
         $this->volumes = [];
+    }
+
+    /**
+     * Verify is this instance is Valid.
+     *
+     * @return bool
+     */
+    protected function isValid(): bool
+    {
+        foreach (static::$requiredFields as $field) {
+            if (! isset($this->attributes[$field]) || ! $this->attributes[$field]) {
+                return false;
+            }
+        }
+
+        return (bool) $this->volumes;
+    }
+
+    /**
+     * Returns a new instance of Request.
+     *
+     * @param string $token
+     *
+     * @return Request
+     */
+    protected function newRequest(string $token): Request
+    {
+        return new Request($token);
+    }
+
+    /**
+     * Return this object in json format.
+     *
+     * @return string
+     */
+    protected function toJson(): string
+    {
+        $this->formatter->setInstance($this);
+
+        return $this->formatter->format();
+    }
+
+    /**
+     * Getter of postal code destination
+     *
+     * @return string|null
+     */
+    protected function getPostalCodeDestination()
+    {
+        return $this->attributes['cep_destino'] ?? null;
     }
 }

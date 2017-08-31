@@ -1,28 +1,21 @@
 <?php
 namespace Axado;
 
+use Axado\Exception\DestinationNotFoundException;
+use Axado\Exception\OriginNotFoundException;
+use Axado\Exception\ShippingException;
+
 class Response
 {
     /**
-     * If the request is ok.
+     * Relevant errors from Axado API that are mapped to exceptions.
      *
-     * @var bool
+     * @var array
      */
-    protected $isOk;
-
-    /**
-     * Error Id sent by Axado.
-     *
-     * @var int
-     */
-    protected $errorId;
-
-    /**
-     * Error message sent by Axado.
-     *
-     * @var string
-     */
-    protected $errorMessage;
+    private static $translatedErrors = [
+        101 => OriginNotFoundException::class,
+        102 => DestinationNotFoundException::class,
+    ];
 
     /**
      * Array of Axado\Quotation.
@@ -42,16 +35,6 @@ class Response
     }
 
     /**
-     * Returns if the response was Ok.
-     *
-     * @return bool
-     */
-    public function isOk(): bool
-    {
-        return (bool) $this->isOk;
-    }
-
-    /**
      * Parse the raw response to this object.
      *
      * @param array|null $raw
@@ -59,30 +42,25 @@ class Response
     public function parse($raw = null)
     {
         $arrayResponse = (array) $raw;
-        $this->isOk = ! $this->isError($arrayResponse);
+        $this->checkForErrors($arrayResponse);
 
-        if ($this->isOk) {
-            $this->parseQuotations($arrayResponse);
-        }
+        $this->parseQuotations($arrayResponse);
     }
 
     /**
      * Verify if this Response has an error.
      *
-     * @param array $arrayResponse
+     * @throws ShippingException
      *
-     * @return bool
+     * @param array $arrayResponse
      */
-    protected function isError($arrayResponse): bool
+    protected function checkForErrors($arrayResponse)
     {
-        if (isset($arrayResponse['erro_id'])) {
-            $this->errorId = $arrayResponse['erro_id'];
-            $this->errorMessage = $arrayResponse['erro_msg'];
+        if ($errorId = $arrayResponse['erro_id'] ?? null) {
+            $exceptionClass = static::$translatedErrors[$errorId] ?? ShippingException::class;
 
-            return true;
+            throw new $exceptionClass($arrayResponse['erro_msg'], $errorId);
         }
-
-        return ! $arrayResponse;
     }
 
     /**
