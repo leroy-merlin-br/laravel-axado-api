@@ -231,11 +231,6 @@ class ShippingTest extends TestCase
             ->twice()
             ->andReturn([]);
 
-        $response->shouldReceive('getQuotationToken')
-            ->withNoArgs()
-            ->once()
-            ->andReturn('1231203das01');
-
         $shipping->shouldReceive('newRequest')
             ->with($token)
             ->once()

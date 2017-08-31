@@ -42,13 +42,6 @@ class Shipping
     protected $electedQuotation;
 
     /**
-     * Quotation string.
-     *
-     * @var string
-     */
-    protected $quotationToken;
-
-    /**
      * All volumes objects.
      *
      * @var array
@@ -140,7 +133,6 @@ class Shipping
         if (! $this->response) {
             $request = $this->newRequest(static::$token);
             $this->response = $request->consultShipping($this->toJson());
-            $this->quotationToken = $this->response->getQuotationToken();
         }
 
         return $this->response->quotations();

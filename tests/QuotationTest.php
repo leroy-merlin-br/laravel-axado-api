@@ -35,35 +35,6 @@ class QuotationTest extends TestCase
         $this->assertSame($expected, $result);
     }
 
-    public function testShouldReturnNullWithNoTheQuotationToken()
-    {
-        // Set
-        $quotation = new Quotation();
-
-        // Actions
-        $result = $quotation->getQuotationCode();
-
-        // Assertions
-        $this->assertNull($result);
-    }
-
-    public function testShouldReturnTheQuotationToken()
-    {
-        // Set
-        $quotation = new Quotation();
-        $quotation->fill(
-            [
-                'cotacao_codigo' => '123',
-            ]
-        );
-
-        // Actions
-        $result = $quotation->getQuotationCode();
-
-        // Assertions
-        $this->assertSame('123', $result);
-    }
-
     public function testShouldReturnNullCost()
     {
         // Set

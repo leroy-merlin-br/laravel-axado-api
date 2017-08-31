@@ -52,16 +52,6 @@ class Quotation
     }
 
     /**
-     * Returns the quotation code.
-     *
-     * @return string|null
-     */
-    public function getQuotationCode()
-    {
-        return $this->attributes['quotation_id'] ?? null;
-    }
-
-    /**
      * Returns the cost.
      *
      * @return string|null

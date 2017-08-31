@@ -125,6 +125,5 @@ class ResponseTest extends TestCase
 
         // Assertions
         $this->assertTrue(is_array($result));
-        $this->assertSame('token consulta', $response->getQuotationToken());
     }
 }

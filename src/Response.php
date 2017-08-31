@@ -11,16 +11,16 @@ class Response
     protected $isOk;
 
     /**
-     * Error_id sent by Axado.
+     * Error Id sent by Axado.
      *
-     * @var bool
+     * @var int
      */
     protected $errorId;
 
     /**
-     * The error message sent by Axado.
+     * Error message sent by Axado.
      *
-     * @var bool
+     * @var string
      */
     protected $errorMessage;
 
@@ -30,13 +30,6 @@ class Response
      * @var array
      */
     protected $quotations = [];
-
-    /**
-     * The token sent by Axado.
-     *
-     * @var string
-     */
-    protected $quotationToken;
 
     /**
      * Getter for quotations.
@@ -100,22 +93,11 @@ class Response
     protected function parseQuotations(array $arrayResponse)
     {
         $quotationsArray = $arrayResponse['cotacoes'] ?? [];
-        $this->quotationToken = $arrayResponse['consulta_token'] ?? null;
 
-        foreach ($quotationsArray as $quotationArray) {
+        foreach ($quotationsArray as $quotationData) {
             $quotation = new Quotation();
-            $quotation->fill($quotationArray);
+            $quotation->fill($quotationData);
             $this->quotations[] = $quotation;
         }
-    }
-
-    /**
-     * Returns the quotation token.
-     *
-     * @return string|null
-     */
-    public function getQuotationToken()
-    {
-        return $this->quotationToken;
     }
 }
