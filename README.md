@@ -1,7 +1,8 @@
 Laravel Axado API
 =================
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/?branch=master) [![Coverage Status](https://coveralls.io/repos/leroy-merlin-br/laravel-axado-api/badge.png?branch=master)](https://coveralls.io/r/leroy-merlin-br/laravel-axado-api?branch=master) [![Build Status](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/build.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/build-status/master) [![Build Status](https://travis-ci.org/leroy-merlin-br/laravel-axado-api.svg)](https://travis-ci.org/leroy-merlin-br/laravel-axado-api)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/?branch=master) [![Coverage Status](https://coveralls.io/repos/leroy-merlin-br/laravel-axado-api/badge.png?branch=master)](https://coveralls.io/r/leroy-merlin-br/laravel-axado-api?branch=master) [![Build Status](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/build.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/build-status/master) [![Build Status](https://travis-ci.org/leroy-merlin-br/laravel-axado-api.svg)](https://travis-ci.org/leroy-merlin-br/laravel-axado-api) [![StyleCI](https://styleci.io/repos/24239026/shield?branch=master)](https://styleci.io/repos/24239026)
+
 
 A wrapper to Axado API.
 
