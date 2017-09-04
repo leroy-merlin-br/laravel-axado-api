@@ -1,27 +1,33 @@
 <?php
+namespace Axado;
 
-class TestCase extends PHPUnit_Framework_TestCase
+use Mockery as m;
+use PHPUnit\Framework\TestCase as BaseTestCase;
+use ReflectionMethod;
+
+class TestCase extends BaseTestCase
 {
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
     {
-        parent::setUp();
-    }
-
-    public function tearDown()
-    {
+        m::close();
         parent::tearDown();
     }
 
     /**
      * Actually runs a protected method of the given object.
-     * @param       $obj
-     * @param       $method
-     * @param array $args
+     *
+     * @param object $object
+     * @param string $method
+     * @param mixed  $args
+     *
      * @return mixed
      */
-    protected function callProtected($obj, $method, $args = array())
+    protected function callProtected($object, string $method, $args = [])
     {
-        $methodObj = new ReflectionMethod(get_class($obj), $method);
+        $methodObj = new ReflectionMethod(get_class($object), $method);
         $methodObj->setAccessible(true);
 
         if (is_object($args)) {
@@ -30,6 +36,6 @@ class TestCase extends PHPUnit_Framework_TestCase
             $args = (array) $args;
         }
 
-        return $methodObj->invokeArgs($obj, $args);
+        return $methodObj->invokeArgs($object, $args);
     }
 }

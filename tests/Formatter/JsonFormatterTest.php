@@ -1,47 +1,45 @@
 <?php
-namespace Axado;
+namespace Axado\Formatter;
 
-use TestCase;
+use Axado\Shipping;
+use Axado\TestCase;
+use Axado\Volume\VolumeInterface;
 use Mockery as m;
-use \Axado\Formatter\JsonFormatter;
 
 class JsonFormatterTest extends TestCase
 {
-    public function tearDown()
-    {
-        parent::tearDown();
-        m::close();
-    }
-
-    public function testShouldFormatPropertlyTheShippingInstanceGiven()
+    public function testShouldFormatProperlyTheShippingInstanceGiven()
     {
         // Set
-        $formatter  = new JsonFormatter;
-        $instance   = m::mock('Axado\Shipping');
-        $volume     = m::mock('Axado\Volume\VolumeInterface');
+        $formatter = new JsonFormatter();
+        $instance = m::mock(Shipping::class);
+        $formatter->setInstance($instance);
+
+        $volume = m::mock(VolumeInterface::class);
         $attributes = ['preco' => 10.5, 'unidade' => 10];
 
-        // Expect
+        // Expectations
         $instance->shouldReceive('getAttributes')
+            ->withNoArgs()
             ->once()
             ->andReturn($attributes);
 
         $volume->shouldReceive('volumeToArray')
+            ->withNoArgs()
             ->once()
             ->andReturn(['preco' => 10.50, 'unidade' => 1]);
 
         $instance->shouldReceive('allVolumes')
+            ->withNoArgs()
             ->once()
-            ->andReturn([ $volume ]);
+            ->andReturn([$volume]);
 
-        // Act
-        $formatter->setInstance($instance);
+        // Actions
         $result = $formatter->format();
 
-        // Assert
-        $this->assertEquals(
+        // Assertions
+        $this->assertJson(
             '{"preco":10.5,"unidade":10,"volumes":[{"preco":10.5,"unidade":1}]}',
-            $result
-        );
+            $result);
     }
 }

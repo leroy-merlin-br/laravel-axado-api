@@ -12,7 +12,13 @@
 >
     <testsuites>
         <testsuite>
-            <directory suffix=".php">./tests/LeroyMerlin/Axado</directory>
+            <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src</directory>
+        </whitelist>
+    </filter>
 </phpunit>

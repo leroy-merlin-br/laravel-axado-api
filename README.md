@@ -1,70 +1,69 @@
 Laravel Axado API
 =================
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/?branch=master)
-[![Coverage Status](https://coveralls.io/repos/leroy-merlin-br/laravel-axado-api/badge.png?branch=master)](https://coveralls.io/r/leroy-merlin-br/laravel-axado-api?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/build.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/build-status/master)
-[![Build Status](https://travis-ci.org/leroy-merlin-br/laravel-axado-api.svg)](https://travis-ci.org/leroy-merlin-br/laravel-axado-api)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/?branch=master) [![Coverage Status](https://coveralls.io/repos/leroy-merlin-br/laravel-axado-api/badge.png?branch=master)](https://coveralls.io/r/leroy-merlin-br/laravel-axado-api?branch=master) [![Build Status](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/badges/build.png?b=master)](https://scrutinizer-ci.com/g/leroy-merlin-br/laravel-axado-api/build-status/master) [![Build Status](https://travis-ci.org/leroy-merlin-br/laravel-axado-api.svg)](https://travis-ci.org/leroy-merlin-br/laravel-axado-api) [![StyleCI](https://styleci.io/repos/24239026/shield?branch=master)](https://styleci.io/repos/24239026)
+
 
 A wrapper to Axado API.
 
-## Get started
+## Instalation
 
-Add this package into your `composer.json`.
+To get started, install Laravel Axado API via the Composer package manager:
 
-> "leroy-merlin-br/laravel-axado-api" : "~1.0"
-
-Run `composer update`
-
-> composer update
+```bash
+composer require leroy-merlin-br/laravel-axado-api
+```
 
 ## Setup
 
-### Uses in your class VolumeTrait and VolumeInterface
+Make your `Product` class implement `VolumeInterface`.
+Optionally, you can use `VolumeTrait` too. For example:
+    
+```php
+class Product implements Axado\Volume\VolumeInterface {
+    use Axado\Volume\VolumeTrait;
 
-For example:
+    public function getSku()       { return "123"; }
+    public function getQuantity()  { return 10; }
+    public function getPriceUnit() { return 10.5; }
+    public function getHeight()    { return 10; }
+    public function getLength()    { return 10; }
+    public function getWidth()     { return 10; }
+    public function getWeight()    { return 10; }
+}
+```
 
-    class Stub implements Axado\Volume\VolumeInterface {
-        use Axado\Volume\VolumeTrait;
+## Usage
 
-        public function getSku()       { return "123"; }
-        public function getQuantity()  { return 10; }
-        public function getPriceUnit() { return 10.5; }
-        public function getHeight()    { return 10; }
-        public function getLength()    { return 10; }
-        public function getWidth()     { return 10; }
-        public function getWeight()    { return 10; }
-    }
-
-
-### Setting the Token API.
-
+- Setting the Token API.
+    ```php
     \Axado\Shipping::$token = "your-token";
+    ```
 
-### Creating a new Shipping
-
-    $shipping = new Axado\Shipping;
-
+- Creating a new Shipping
+    ```php
+    $shipping = new Axado\Shipping();
+    
     $shipping->setPostalCodeOrigin('04661100');
     $shipping->setPostalCodeDestination('13301430');
     $shipping->setTotalPrice('40');
-    $shipping->setAditionalDays('10');
-    $shipping->setAditionalPrice('12.6');
+    $shipping->setAdditionalDays('10');
+    $shipping->setAdditionalPrice('12.6');
+    ```
 
-### Adding Volume
-
-    $volume = new Stub;
+- Adding Volume
+    ```php
+    $volume = new Product();
     $shipping->addVolume($volume);
+    ```
 
-### Getting all quotations
-
+- Getting all quotations
+    ```php
     $shipping->quotations();
+    ```
 
-### Get costs and deadline
-
-    $shipping->getCosts();     // in reais
-    $shipping->getDeadline();  // in days
-
-### Marking the last quotation as contracted
-
-    $shipping->flagAsContracted();
+- Getting costs and deadline
+    ```php
+    $shipping->getCosts();      // in reais
+    $shipping->getDeadline();   // in days
+    ```
