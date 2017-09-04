@@ -9,7 +9,7 @@ class RequestTest extends TestCase
     {
         // Set
         $token = 'dsao231';
-        $request = m::mock(Request::class . '[doRequest]', [$token]);
+        $request = m::mock(Request::class.'[doRequest]', [$token]);
         $request->shouldAllowMockingProtectedMethods();
         $data = '{ json: string }';
         $raw = ['rawResponse' => true];

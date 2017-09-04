@@ -38,7 +38,7 @@ class Request
     {
         $raw = $this->doRequest(
             'POST',
-            static::$consultURL . $this->token,
+            static::$consultURL.$this->token,
             $jsonString
         );
 

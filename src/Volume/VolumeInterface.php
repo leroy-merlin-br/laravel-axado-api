@@ -53,7 +53,7 @@ interface VolumeInterface
     public function getWeight();
 
     /**
-     * Json for volume
+     * Json for volume.
      *
      * @return array
      */

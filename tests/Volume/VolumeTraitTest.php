@@ -8,8 +8,7 @@ class VolumeTraitTest extends TestCase
     public function testShouldGetVolumeArray()
     {
         // Set
-        $volume = new class () implements VolumeInterface
-        {
+        $volume = new class() implements VolumeInterface {
             use VolumeTrait;
 
             public function getSku()

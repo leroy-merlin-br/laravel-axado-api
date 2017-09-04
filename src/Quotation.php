@@ -62,7 +62,7 @@ class Quotation
     }
 
     /**
-     * Returns the deadline in days
+     * Returns the deadline in days.
      *
      * @return string|null
      */
@@ -72,7 +72,7 @@ class Quotation
     }
 
     /**
-     * Magic attribute getter
+     * Magic attribute getter.
      *
      * @param string $attributeName
      *

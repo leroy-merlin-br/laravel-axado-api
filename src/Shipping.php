@@ -63,7 +63,7 @@ class Shipping
     protected $response;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Axado\Formatter\FormatterInterface $formatter
      */
@@ -81,11 +81,11 @@ class Shipping
      */
     public function quotations()
     {
-        if (! $this->isValid()) {
+        if (!$this->isValid()) {
             throw new ShippingException('This shipping was not filled correctly');
         }
 
-        if (! $this->response) {
+        if (!$this->response) {
             $request = $this->newRequest(static::$token);
             $this->response = $request->consultShipping($this->toJson());
         }
@@ -102,7 +102,7 @@ class Shipping
      */
     public function firstQuotation(): Quotation
     {
-        if (! $quotation = $this->quotations()[0] ?? null) {
+        if (!$quotation = $this->quotations()[0] ?? null) {
             throw new QuotationNotFoundException(
                 sprintf(
                     'No quotations were found to the given CEP: %s',
@@ -191,7 +191,7 @@ class Shipping
     /**
      * Calculate the additional price.
      *
-     * @param  string $price
+     * @param string $price
      *
      * @return float
      */
@@ -279,7 +279,7 @@ class Shipping
     protected function isValid(): bool
     {
         foreach (static::$requiredFields as $field) {
-            if (! isset($this->attributes[$field]) || ! $this->attributes[$field]) {
+            if (!isset($this->attributes[$field]) || !$this->attributes[$field]) {
                 return false;
             }
         }
@@ -312,7 +312,7 @@ class Shipping
     }
 
     /**
-     * Getter of postal code destination
+     * Getter of postal code destination.
      *
      * @return string|null
      */

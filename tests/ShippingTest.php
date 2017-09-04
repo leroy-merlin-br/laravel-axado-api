@@ -96,7 +96,7 @@ class ShippingTest extends TestCase
     public function testShouldThrowAxadoExceptionWhenTheShippingIsNotValid()
     {
         // Set
-        $shipping = m::mock(Shipping::class . '[isValid]');
+        $shipping = m::mock(Shipping::class.'[isValid]');
         $shipping->shouldAllowMockingProtectedMethods();
 
         // Expectations
@@ -115,7 +115,7 @@ class ShippingTest extends TestCase
     public function testShouldReturnTheGetCostsProperly()
     {
         // Set
-        $shipping = m::mock(Shipping::class . '[firstQuotation]');
+        $shipping = m::mock(Shipping::class.'[firstQuotation]');
         $shipping->shouldAllowMockingProtectedMethods();
 
         $quotation = m::mock(Quotation::class);
@@ -143,7 +143,7 @@ class ShippingTest extends TestCase
     public function testShouldReturnTheGetDeadlineProperly()
     {
         // Set
-        $shipping = m::mock(Shipping::class . '[firstQuotation]');
+        $shipping = m::mock(Shipping::class.'[firstQuotation]');
         $quotation = m::mock(Quotation::class);
         $expected = 4;
         $quotation->deadline = $expected;
@@ -171,7 +171,7 @@ class ShippingTest extends TestCase
     public function testShouldGetFirstQuotation()
     {
         // Set
-        $shipping = m::mock(Shipping::class . '[quotations]');
+        $shipping = m::mock(Shipping::class.'[quotations]');
         $quotation = m::mock(Quotation::class);
 
         $shipping->shouldAllowMockingProtectedMethods();
@@ -192,7 +192,7 @@ class ShippingTest extends TestCase
     public function testShouldThrowExceptionIfItHasNoQuotation()
     {
         // Set
-        $shipping = m::mock(Shipping::class . '[quotations]');
+        $shipping = m::mock(Shipping::class.'[quotations]');
         $shipping->shouldAllowMockingProtectedMethods();
 
         $shipping->setPostalCodeDestination('01234-000');
@@ -214,7 +214,7 @@ class ShippingTest extends TestCase
     {
         // Set
         $formatter = m::mock(FormatterInterface::class);
-        $shipping = m::mock(Shipping::class . '[isValid,newRequest]', [$formatter]);
+        $shipping = m::mock(Shipping::class.'[isValid,newRequest]', [$formatter]);
         $shipping->shouldAllowMockingProtectedMethods();
         $shipping->setPostalCodeDestination('01234-000');
         $token = 't0k3n';
@@ -243,7 +243,6 @@ class ShippingTest extends TestCase
             ->once()
             ->andReturn($payload);
 
-
         $request->shouldReceive('consultShipping')
             ->with($payload)
             ->once()
@@ -259,9 +258,9 @@ class ShippingTest extends TestCase
     public function testShouldReturnQuotations()
     {
         // Set
-        $shipping = m::mock(Shipping::class . '[newRequest,isValid]');
+        $shipping = m::mock(Shipping::class.'[newRequest,isValid]');
         $token = '123466';
-        $request = m::mock(Request::class . '[consultShipping,quotations]', [$token]);
+        $request = m::mock(Request::class.'[consultShipping,quotations]', [$token]);
         $response = m::mock(Response::class);
 
         $shipping::$token = $token;
