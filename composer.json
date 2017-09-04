@@ -1,7 +1,7 @@
 {
     "name": "leroy-merlin-br/laravel-axado-api",
     "description": "A consumer for Axado API.",
-    "keywords": ["axado","laravel","shipping", "brazil", "laravel","cep","quotation","frete","brasil"],
+    "keywords": ["axado","laravel","shipping","brazil","cep","quotation","frete","brasil"],
     "license": "MIT",
     "authors": [
         {

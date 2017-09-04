@@ -4,7 +4,7 @@ namespace Axado;
 class Quotation
 {
     /**
-     * Fields with be parsed after the response is returned.
+     * Fields to be parsed after the response is returned.
      *
      * @var array
      */
@@ -19,7 +19,7 @@ class Quotation
     ];
 
     /**
-     * Attributes parsed.
+     * Parsed attributes.
      *
      * @var array
      */
